@@ -1,0 +1,23 @@
+{
+  "name": "conferenceroomsign",
+  "version": "1.0.0",
+  "description": "An application to be used for conference room signage",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JLuboff/ConferenceRoomSign.git"
+  },
+  "author": "Jason Luboff",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JLuboff/ConferenceRoomSign/issues"
+  },
+  "homepage": "https://github.com/JLuboff/ConferenceRoomSign#readme",
+  "dependencies": {
+    "express": "^4.16.2",
+    "mongodb": "^3.0.2"
+  }
+}
