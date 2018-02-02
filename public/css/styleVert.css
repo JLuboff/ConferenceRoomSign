@@ -1,0 +1,78 @@
+html, body, .container-fluid {
+  /* background-color: #e8ebf7; */
+  background-color: white;
+  height: 100%;
+  /*Previous bg color: #f1f7ed */
+}
+
+.header {
+  font-family: 'Open Sans', sans-serif;
+  background-color: #205491;
+  font-size: 60px;
+  color: #dce1d8;
+  box-shadow: 0px 6px 5px #888888;
+}
+
+.timeHeader {
+  font-family: 'Open Sans', sans-serif;
+  margin-left: 0px;
+  width: 100%;
+  background-color: #205491;
+  color: #dce1d8;
+  line-height: 70px;
+}
+
+#time {
+  font-size: 80px;
+}
+
+#date {
+  font-size: 45px;
+}
+
+.calEventsBody {
+  margin-top: 0px;
+  margin-left: 0px;
+  margin-right: 10px;
+  width: 100%;
+  height: 100%;
+  background-color: white;
+  color: black;
+}
+
+.rowFifty {
+  height: 43%;
+  overflow-y: auto;
+}
+
+.status {
+  margin-top: 50px;
+  font-family: 'Open Sans', sans-serif;
+  font-size: 100px;
+  color: #54494b;
+  position: relative;
+  top: 20%;
+}
+
+.busyStat {
+  color: red;
+}
+
+.confStatBarFree {
+  background-color: #44af69;
+  height: 100%;
+}
+
+.confStatBarBusy {
+  background-color: #de1a1a;
+  height: 100%;
+}
+
+.calEvents {
+  font-family: 'Lato', sans-serif;
+  font-size: 45px;
+}
+
+#confStat {
+  line-height: 100px;
+}
