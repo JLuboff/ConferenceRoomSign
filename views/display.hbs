@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html >
+<head>
+
+  <title>{{title}}</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+  <meta charset="UTF-8">
+
+  <link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css'>
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Lato" rel="stylesheet">
+  <style>
+  html, body, .container-fluid {
+    /* background-color: #e8ebf7; */
+    background-color: white;
+    height: 100%;
+    /*Previous bg color: #f1f7ed */
+  }
+
+  .header {
+    font-family: 'Open Sans', sans-serif;
+    background-color: #205491;
+    font-size: 60px;
+    color: #dce1d8;
+    box-shadow: 0px 6px 5px #888888;
+  }
+
+  .timeHeader {
+    font-family: 'Open Sans', sans-serif;
+    margin-left: 0px;
+    width: 100%;
+    background-color: #205491;
+    color: #dce1d8;
+    line-height: 70px;
+  }
+
+  #time {
+    font-size: 80px;
+  }
+
+  #date {
+    font-size: 45px;
+  }
+
+  .calEventsBody {
+    margin-top: 0px;
+    margin-left: 0px;
+    margin-right: 10px;
+    width: 100%;
+    height: 100%;
+    background-color: white;
+    color: black;
+  }
+
+  .rowFifty {
+    height: 43%;
+    overflow-y: auto;
+  }
+
+  .status {
+    margin-top: 50px;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 100px;
+    color: #54494b;
+    position: relative;
+    top: 20%;
+  }
+
+  .busyStat {
+    color: red;
+  }
+
+  .confStatBarFree {
+    background-color: #44af69;
+    height: 100%;
+  }
+
+  .confStatBarBusy {
+    background-color: #de1a1a;
+    height: 100%;
+  }
+
+  .calEvents {
+    font-family: 'Lato', sans-serif;
+    font-size: 45px;
+  }
+
+  #confStat {
+    line-height: 100px;
+  }
+</style>
+</head>
+
+<body>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-lg-12 header">
+
+        {{title}}
+
+      </div>
+    </div>
+    <div class="row rowFifty">
+      <div class="col-md-1 confStatBarFree" id="statBar">
+      </div>
+      <div class="col-md-11 status text-center">
+        <p id="confStat"> Available</p>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-10 col-md-offset-1 timeHeader">
+        <div id="time"></div>
+        <div id="date"></div>
+      </div>
+    </div>
+    <div class="row rowFifty">
+      <div class="col-md-12 calEventsBody">
+        <div class="row">
+          <div class="calEvents">No events currently scheduled</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js'></script>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js'></script>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.15.1/moment.min.js'></script>
+
+<script>
+var current = "";
+
+//Function to display date and time on page
+function startTime() {
+  $("#time").html(moment().format("h:mm"));
+  $("#date").html(moment().format("dddd, MMMM Do"));
+  current = moment().valueOf();
+}
+
+  $(document).ready(function() {
+    //Declare four variables. An empty array to place start and end times of meetings. A full date variable that will be pushed into the array with each start/end times. And the current time in miliseconds. The last two are used for comparison of the JSON data
+    var startEndTimeArr = [];
+    var fullDate = moment().format("YYYY-MM-DD");
+    var previousCal = null;
+    var currentCal = null;
+    //Call to clock function to refresh every second
+    setInterval('startTime()', 1000);
+    //Function for converting time into milliseconds
+    function convertTime(time) {
+      return moment(time, "YYYY-MM-DD h:mm a").valueOf();
+    }
+
+    //API call to json file to get meeting information. Checks every 2 seconds if JSON data has changed, if it has, it will refresh the page with the updated data.
+
+    setInterval(function() {
+      $.getJSON('/getEvents/{{url}}', function(data) {
+        //Places retrieved JSON data into currentCal variable and then runs the if statement to test if it has changed, if so, we refresh the page.
+        currentCal = JSON.stringify(data);
+        if (previousCal && currentCal && previousCal !== currentCal) {
+          console.log('refresh');
+          location.reload();
+        }
+        previousCal = currentCal;
+        $(".calEvents").empty();
+
+        //Loop to get all information for each meeting and display it along with pushing the start and end time to our array for further use
+        for (var i = 0; i < data.length; i++) {
+          if(data.length == 0){
+            $(".calEvents").html("No events currently scheduled");
+          }
+          var title = data[i].Title;
+          var startTime = data[i]["Start Time"];
+          var endTime = data[i]["End Time"];
+          startEndTimeArr.push([fullDate + " " + startTime, fullDate + " " + endTime]);
+          $(".calEvents").append("<div class='col-md-6 title"+i + " upcoming" + i +"'>" + title + "</div><div class='col-md-3 upcoming" + i +"'>" + startTime + "</div><div class='col-md-3 upcoming" + i +"'>" + endTime + "</div>");
+          //An if/else if statement to test if our title length is too long. If it is, we adjust the font size.
+          if(title.length > 30) {
+            $(".title" + i).css("font-size", "30px");
+          } else if(title.length >= 20){
+            $(".title" + i).css("font-size", "45px");
+          }
+        }
+        // A loop to test to see if a meeting is currently under way and to determine what to display if one is, or is not.
+        for (var j = 0; j < startEndTimeArr.length; j++) {
+          var start = convertTime(startEndTimeArr[j][0]);
+          var end = convertTime(startEndTimeArr[j][1]);
+          // console.log("current>end:" + (current>end), "current >= start && current <= end:" + (current >= start && current <= end) );
+          if (current > end){
+            $(".upcoming" + j).css("text-decoration", "line-through");
+            $("#statBar").removeClass("confStatBarBusy").addClass("confStatBarFree");
+            $("#confStat").html("Available");
+          } else if(current >= start && current <= end){
+            $("#statBar").removeClass("confStatBarFree").addClass("confStatBarBusy");
+            $("#confStat").html("<p class='meetingTitle'>" + data[j].Title + "</p><p>" + data[j]["Start Time"] + " to " + data[j]["End Time"] + "</p>");
+            return;
+          }
+        }
+      })
+    }, 2000)
+  })
+</script>
+
+</body>
+</html>

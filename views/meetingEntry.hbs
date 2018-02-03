@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html >
+<head>
+
+  <title>{{title}}</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+  <meta charset="UTF-8">
+  <link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css'>
+<style>
+body {
+  margin-top: 50px;
+  background: url(http://web-dcor/ConfSignage/images/background.jpg) no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+}
+
+label {
+  display: inline !important;
+}
+
+#submit {
+  margin-top: 50px;
+}
+
+.addRemoveBtn {
+  position: relative;
+  top: -100px;
+}
+
+#publish {
+  margin-top: 25px;
+  margin-bottom: 50px;
+}
+
+.submissionControls {
+  position: relative;
+  top: 25px;
+}
+
+p {
+  font-size: 25px;
+}
+
+.bold {
+  font-weight: bold;
+}
+
+.header {
+  font-size: 45px;
+}
+
+#bodyWell {
+  background-color: rgba(255, 255, 255, 0.5);
+  margin: 100px -75px 0px 200px;
+  padding: 25px;
+  border: 0px;
+}
+
+.topMargin {
+  margin-top: 150px;
+}
+</style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
+
+</head>
+
+<body>
+  <div class="container">
+    <div class="well" id="bodyWell">
+      <div class="row">
+        <div class="col-sm-9 col-sm-offset-2 formDiv">
+          <p class="text-center" id="title"> {{title}}</p>
+          <form class="form-horizontal" id="meetEvent">
+            <div id="meetEventBody">
+              <div class="form-group">
+                <label for="meetingDate" class="col-sm-2 control-label">Meeting Date</label>
+                <div class="col-sm-6">
+                  <input class="form-control" type="date" id="meetingDate" name="meetingDate[]" required/>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="meetingTitle" class="col-sm-2 control-label">Meeting Title</label>
+                <div class="col-sm-6">
+                  <input class="form-control" id="meetingTitle" name="meetingTitle[]" required/>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="startTime" class="col-sm-2 control-label">Start Time</label>
+                <div class="col-sm-6">
+                  <input class="form-control numOnly" id="startTime" name="startTime[]" minlength="4" maxlength="5" required/>
+                </div>
+                <div class="col-sm-2">
+                  <select class="form-control" name="startTimePeriod[]" required/>
+                  <option value=""> </option>
+                  <option value="AM">AM</option>
+                  <option value="PM">PM</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="endTime" class="col-sm-2 control-label">End Time </label>
+              <div class="col-sm-6">
+                <input class="form-control numOnly" id="endTime" name="endTime[]" minlength="4" maxlength="5" required/>
+              </div>
+              <div class="col-sm-2">
+                <select class="form-control" name="endTimePeriod[]" required/>
+                <option value=""> </option>
+                <option value="AM">AM</option>
+                <option value="PM">PM</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group formControls">
+          <div class="col-sm-2 col-sm-offset-4">
+            <button type="submit" class="btn btn-primary" id="submit">Continue</button>
+          </div>
+        </div>
+      </form>
+      <div class="row addRemoveBtn">
+        <div class="col-sm-4 col-sm-offset-3">
+          <button id="add" class="btn"><i class="fa fa-plus"></i> Additional Meeting</button>
+        </div>
+        <div class="col-sm-4">
+          <button id="remove" class="btn hidden"><i class="fa fa-minus"></i> Remove Meeting</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.15.1/moment.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery.alphanum/1.0.24/jquery.alphanum.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery-serialize-object/2.5.0/jquery.serialize-object.min.js'></script>
+<script>
+$(document).ready(function(){
+  //Limit input field to only allow numbers and colon. I changed this into a function as to allow recursion. It was not being applied to our cloned fields.
+  //By calling to our function below, it then gets applied.
+const numOnly = ()=>{
+    $(".numOnly").alphanum({
+      allow              : ':',
+      disallow           : 'xyz',
+      allowSpace         : false,
+      allowNumeric       : true,
+      allowUpper         : false,
+      allowLower         : false,
+      allowCaseless      : true,
+      allowLatin         : true,
+      allowOtherCharSets : true,
+      forceUpper         : false,
+      forceLower         : false,
+      maxLength          : NaN
+    });
+  }
+  numOnly();
+
+  let meetEventIndex = 0,
+      appendCount = 0;
+
+  //We create a click function to add additional fields if an additional meeting is needed. It will also reveal the Remove button. Adds one to our counter each time
+  $('#add').click(() => {
+    meetEventIndex++;
+        //When adding additional fields we look at the meetEventBody div and clone and append our cloned fields after the original field. We clear its contnets (if any) and change its id. We call back to our numOnly function to ensure only numbers and colon are accepted in our fields.
+    $("#meetEventBody").after($("#meetEventBody").clone().find("input:text").val("").end().attr("id", "meetEventBody" + meetEventIndex));
+    $("#remove").removeClass("hidden");
+    numOnly();
+  });
+
+  //A click function to remove an additional fields we've added. This decrements our counter, and if counter = 0 we remove the remove button
+  $("#remove").click(() => {
+    $("#meetEventBody" + meetEventIndex).remove();
+    meetEventIndex--;
+    if(meetEventIndex == 0){
+      $('#remove').addClass("hidden");
+    }
+  })
+$('#meetEvent').submit(function(e){
+  e.preventDefault();
+    var formData = $(this).serializeObject();
+    console.log(formData);
+    //Create a loop for the purpose of testing our time inputs to verify that they contain a colon as well as formatted in 12 hour time instead of 24 hour time
+    for (var j = 0; j < formData.startTime.length; j++){
+      var splitStart = formData.startTime[j].split('');
+      var splitEnd = formData.endTime[j].split('');
+      if (formData.startTime[j].length == 5){
+        if(splitStart[0] == 0 || splitStart[1] > 2){
+          alert ("Invalid input. Please input in 12 hour time (i.e 12:30 or 3:00)");
+          return false;
+        }
+      }
+      if (formData.startTime[j][1] != ':' && formData.startTime[j][2] != ':'){
+        alert ("Invalid input. Please include a colon (:) within your time.");
+        return false;
+      }
+      if(formData.endTime[j].length == 5){
+        if(splitEnd[0] == 0 || splitEnd[1] > 2){
+          alert ("Invalid input. Please input in 12 hour time (i.e 12:30 or 3:00)");
+          return false;
+        }
+      }
+      if (formData.endTime[j][1] != ':' && formData.endTime[j][2] != ':'){
+        alert ("Invalid input. Please include a colon (:) within your time.");
+        return false;
+      }
+    }
+    console.log("Validation complete");
+
+    $.ajax({
+      method: "POST",
+      url: "/createEvents/{{url}}",
+      data: formData
+    })
+
+  })
+})
+</script>
+
+
+</body>
+</html>
