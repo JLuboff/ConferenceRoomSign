@@ -6,7 +6,7 @@ module.exports = (app, db) => {
 			url: req.params.room.toLowerCase()
 		});
 	});
-  
+
 	app.route('/createEvents/:room').post((req, res) => {
 		let insert = [];
 
@@ -27,6 +27,7 @@ module.exports = (app, db) => {
 		}
 
 		db.collection('event').insertMany(insert);
+    res.send('Success');
 	});
 
 	app.route('/roomDisplay/:room').get((req, res) => {

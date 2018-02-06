@@ -6,6 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
   <meta charset="UTF-8">
   <link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css'>
+  <link rel='stylesheet' href='http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/themes/smoothness/jquery-ui.min.css'>
 <style>
 body {
   margin-top: 50px;
@@ -77,7 +78,7 @@ p {
               <div class="form-group">
                 <label for="meetingDate" class="col-sm-2 control-label">Meeting Date</label>
                 <div class="col-sm-6">
-                  <input class="form-control" type="date" id="meetingDate" name="meetingDate[]" required/>
+                  <input class="form-control meetingDate" id="meetingDate" name="meetingDate[]" required/>
                 </div>
               </div>
               <div class="form-group">
@@ -131,18 +132,39 @@ p {
     </div>
   </div>
 
+  <div class="row">
+    <div class="col-sm-12 hidden" id="submitContent">
+      <p class="text-center header"> Meetings to display </p>
+      <div class="row">
+        <div class="col-sm-2" id="meetingSubmitDate"><p class="bold">Date:</p>
+          <p class="submittedDate"></p>
+        </div>
+        <div class="col-sm-6" id="meetingSubmitTitle"><p class="bold">Meeting Title:</p>
+          <p class="submittedTitle"></p>
+        </div>
+        <div class="col-sm-2" id="meetingSubmitStart"><p class="bold">Start Time:</p>
+          <p class="submittedStart"></p>
+        </div>
+        <div class="col-sm-2" id="meetingSubmitEnd"><p class="bold">End Time:</p>
+          <p class="submittedEnd"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div>
 </div>
 <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js'></script>
 <script src='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js'></script>
 <script src='https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.15.1/moment.min.js'></script>
 <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery.alphanum/1.0.24/jquery.alphanum.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js'></script>
 <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery-serialize-object/2.5.0/jquery.serialize-object.min.js'></script>
 <script>
 $(document).ready(function(){
   //Limit input field to only allow numbers and colon. I changed this into a function as to allow recursion. It was not being applied to our cloned fields.
   //By calling to our function below, it then gets applied.
-const numOnly = ()=>{
+ function numOnly(){
     $(".numOnly").alphanum({
       allow              : ':',
       disallow           : 'xyz',
@@ -160,20 +182,39 @@ const numOnly = ()=>{
   }
   numOnly();
 
+  function convertTime(time) {
+    return moment(time, "YYYY-MM-DD h:mm a").valueOf();
+  }
+
+  $.datepicker.setDefaults({
+    dateFormat: 'yy-mm-dd',
+    showButtonPanel: true
+  })
+  $('.meetingDate').datepicker();
+
   let meetEventIndex = 0,
       appendCount = 0;
 
   //We create a click function to add additional fields if an additional meeting is needed. It will also reveal the Remove button. Adds one to our counter each time
-  $('#add').click(() => {
+
+
+  $('#add').click(function(){
     meetEventIndex++;
         //When adding additional fields we look at the meetEventBody div and clone and append our cloned fields after the original field. We clear its contnets (if any) and change its id. We call back to our numOnly function to ensure only numbers and colon are accepted in our fields.
-    $("#meetEventBody").after($("#meetEventBody").clone().find("input:text").val("").end().attr("id", "meetEventBody" + meetEventIndex));
+  let newFields =  $("#meetEventBody").after($("#meetEventBody").clone().find("input:text").val("").end().attr("id", "meetEventBody" + meetEventIndex));
     $("#remove").removeClass("hidden");
     numOnly();
+    $(`#meetEventBody${meetEventIndex}.meetingDate`).attr("id", "test")
+  //  newFields.find('input.meetingDate').attr("id", "meetingDate"+meetEventIndex).removeClass('hasDatePicker').removeData('datapicker').unbind().datepicker();
+    //$('.meetingDate').datepicker('refresh');
   });
 
+  $(document).on('focus', '.meetingDate', function(){
+    $(this).datepicker();
+  })
+
   //A click function to remove an additional fields we've added. This decrements our counter, and if counter = 0 we remove the remove button
-  $("#remove").click(() => {
+  $("#remove").click(function(){
     $("#meetEventBody" + meetEventIndex).remove();
     meetEventIndex--;
     if(meetEventIndex == 0){
@@ -183,7 +224,6 @@ const numOnly = ()=>{
 $('#meetEvent').submit(function(e){
   e.preventDefault();
     var formData = $(this).serializeObject();
-    console.log(formData);
     //Create a loop for the purpose of testing our time inputs to verify that they contain a colon as well as formatted in 12 hour time instead of 24 hour time
     for (var j = 0; j < formData.startTime.length; j++){
       var splitStart = formData.startTime[j].split('');
@@ -191,31 +231,101 @@ $('#meetEvent').submit(function(e){
       if (formData.startTime[j].length == 5){
         if(splitStart[0] == 0 || splitStart[1] > 2){
           alert ("Invalid input. Please input in 12 hour time (i.e 12:30 or 3:00)");
-          return false;
+          return;
         }
       }
       if (formData.startTime[j][1] != ':' && formData.startTime[j][2] != ':'){
         alert ("Invalid input. Please include a colon (:) within your time.");
-        return false;
+        return;
       }
       if(formData.endTime[j].length == 5){
         if(splitEnd[0] == 0 || splitEnd[1] > 2){
           alert ("Invalid input. Please input in 12 hour time (i.e 12:30 or 3:00)");
-          return false;
+          return;
         }
       }
       if (formData.endTime[j][1] != ':' && formData.endTime[j][2] != ':'){
         alert ("Invalid input. Please include a colon (:) within your time.");
-        return false;
+        return;
       }
     }
     console.log("Validation complete");
 
+    $(this).addClass("hidden");
+    $(".addRemoveBtn").addClass("hidden");
+    $(".submissionControls, #submitContent").removeClass("hidden");
+    //We empty our three categories (If we don't, then each time we try to modify meetings, it will duplicate previous meetings) before using a loop to create three variables (title, start time and end time) and then append those to each corresponding category.
+    $(".submittedDate, .submittedTitle, .submittedStart, .submittedEnd").empty();
+    startEndTimeArr = [];
+
+    for(var i = 0; i < formData.meetingTitle.length; i++){
+      var date = formData.meetingDate[i];
+      var title = formData.meetingTitle[i];
+      var startTime = formData.startTime[i] + " " + formData.startTimePeriod[i];
+      var endTime = formData.endTime[i] + " " + formData.endTimePeriod[i];
+
+      startEndTimeArr.push([convertTime(formData.meetingDate[i] + " " + startTime), convertTime(formData.meetingDate[i] + " " + endTime)]);
+
+      $('.submittedDate').append('<p>' + date +' </p>');
+      $(".submittedTitle").append('<p>' + title + '</p>');
+      $(".submittedStart").append('<p>' + startTime + '</p>');
+      $(".submittedEnd").append('<p>' + endTime + '</p>');
+    }
+
+    function sortByStart(a, b){
+      if (a[0] === b[0]){
+        return 0;
+      } else {
+        return (a[0] < b[0]) ? -1 : 1;
+      }
+    }
+    startEndTimeArr.sort(sortByStart);
+    //We check if to make sure we don't already have a submissionControls, if we don't, we add them. If we do, no action.
+    if(appendCount == 0){
+      appendCount++;
+      $("#submitContent").append('<div class="form-group submissionControls"><div class="col-sm-4 col-sm-offset-3"><button id="modify" class="btn"><i class="fa fa-plus"></i> Modify Meetings</button></div></div><div class="form-group submissionControls"><div class="col-sm-4 col-sm-offset-3 text-center"><button type="submit" class="btn btn-primary" id="publish">Publish</button></div></div>');
+    }
+    //When clicking modify meetings, we hide our submissionControls and content and reveal our form with appropriate buttons
+    $("#modify").click(function(){
+      $(".submissionControls, #submitContent").addClass("hidden");
+      $("form, .addRemoveBtn").removeClass("hidden");
+    })
+    // A loop to test to determine if any overlapping meetings are occuring. If so, we disable the publish button and insist on the user modifying the meetings
+    $("#publish").prop("disabled", false);
+    for (var j = 0; j < startEndTimeArr.length; j++) {
+      var numTwo = j + 1
+      if (numTwo < startEndTimeArr.length){
+        //var start = startEndTimeArr[j][0];
+        var end = startEndTimeArr[j][1];
+        var startTwo = startEndTimeArr[numTwo][0];
+        //var endTwo = startEndTimeArr[numTwo][1];
+        if (end > startTwo){
+          alert ("Certain meeting times are overlapping, please select 'Modify Meetings' to correct them.");
+          $("#publish").prop("disabled", true);
+        }
+      }
+    }
+    //On submit of the form, we use the serializeJSON framework to format our data and then use .post to send to our php script which then writes it to our json file
+    $("#publish").click(function(event){
+      $.ajax({
+        method: "POST",
+        url: "/createEvents/{{url}}",
+        data: formData,
+        success: function(data){
+          console.log(`Success: ${data}`)
+        }
+    })
+})
+  //})
+/*
     $.ajax({
       method: "POST",
       url: "/createEvents/{{url}}",
-      data: formData
-    })
+      data: formData,
+      success: function(data){
+        console.log(`Success: ${data}`)
+      }
+    }) */
 
   })
 })
