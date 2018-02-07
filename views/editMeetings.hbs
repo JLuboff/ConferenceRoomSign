@@ -42,7 +42,7 @@ label {
 }
 
 p {
-  font-size: 25px;
+  font-size: 18px;
 }
 
 .bold {
@@ -73,25 +73,47 @@ p {
     <div class="well" id="bodyWell">
 
 <div class="row">
-  <div class="col-sm-12 hidden" id="submitContent">
+  <div class="col-sm-12" id="editContent">
     <p class="text-center header"> Meetings to display </p>
     <div class="row">
-      <div class="col-sm-3" id="meetingSubmitDate"><p class="bold">Date:</p>
-        <p class="submittedDate"></p>
+
+      <div class="col-sm-3" id="meetingDate"><p class="bold">Date:</p>
       </div>
-      <div class="col-sm-5" id="meetingSubmitTitle"><p class="bold">Meeting Title:</p>
-        <p class="submittedTitle"></p>
+      <div class="col-sm-3" id="meetingTitle"><p class="bold">Meeting Title:</p>
       </div>
-      <div class="col-sm-2" id="meetingSubmitStart"><p class="bold">Start Time:</p>
-        <p class="submittedStart"></p>
+      <div class="col-sm-2" id="meetingStart"><p class="bold text-right">Start Time:</p>
       </div>
-      <div class="col-sm-2" id="meetingSubmitEnd"><p class="bold">End Time:</p>
-        <p class="submittedEnd"></p>
+      <div class="col-sm-2" id="meetingtEnd"><p class="bold text-right">End Time:</p>
       </div>
-    </div>
+      <div class="col-sm-2" id="meetingEdit">
+      </div>
+
+</div>
+      <div class="row" id="eventList">
+              {{#each data}}
+        <div class="col-sm-3">
+                  <p class="editDate">{{Date}}</p>
+                </div>
+                <div class="col-sm-3">
+                  <p class="editTitle">{{Title}}</p>
+                </div>
+                <div class="col-sm-2">
+                  <p class="editdStart text-right">{{[Start Time]}}</p>
+                </div>
+                <div class="col-sm-2">
+                  <p class="editEnd text-right">{{[End Time]}}</p>
+                </div>
+                <div class="col-sm-2">
+                  <button type="button" class="btn btn-secondary editEvent"><i class="fa fa-pencil"></i></button>
+
+                  <button type="button" class="btn btn-secondary deleteEvent" id="{{_id}}"><i class="fa fa-trash"></i></button>
+                </div>
+                {{/each}}
+
   </div>
 </div>
 
+</div>
 </div>
 </div>
 <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js'></script>
@@ -100,3 +122,36 @@ p {
 <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery.alphanum/1.0.24/jquery.alphanum.min.js'></script>
 <script src='https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js'></script>
 <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery-serialize-object/2.5.0/jquery.serialize-object.min.js'></script>
+<script>
+$(document).on('click', '.deleteEvent', function(e){
+  $.ajax({
+    type: 'DELETE',
+    url: '/deleteEvent/{{url}}/'+ e.target.id,
+    success: function(data){
+      console.log(data);
+      $('#eventList').empty();
+      data.forEach(function(e){
+        $('#eventList').append('<div class="col-sm-3">\
+                  <p class="editDate">'+e.Date +'</p>\
+                </div>\
+                <div class="col-sm-3">\
+                  <p class="editTitle">'+e.Title+'</p>\
+                </div>\
+                <div class="col-sm-2">\
+                  <p class="editdStart text-right">'+e['Start Time']+'</p>\
+                </div>\
+                <div class="col-sm-2">\
+                  <p class="editEnd text-right">' + e['End Time']+ '</p>\
+                </div>\
+                <div class="col-sm-2">\
+                  <button type="button" class="btn btn-secondary editEvent"><i class="fa fa-pencil"></i></button>\
+                  <button type="button" class="btn btn-secondary deleteEvent" id="'+e._id+'"><i class="fa fa-trash"></i></button>\
+                </div>')
+      })
+
+    }
+  })
+})
+</script>
+</body>
+</html>

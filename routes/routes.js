@@ -1,4 +1,6 @@
-const moment = require('moment');
+const moment = require('moment'),
+			ObjectId = require('mongodb').ObjectId;
+
 module.exports = (app, db) => {
 	app.route('/meetingEntry/:room').get((req, res) => {
 		res.render('meetingEntry.hbs', {
@@ -37,8 +39,24 @@ module.exports = (app, db) => {
 		});
 	});
 
-app.route('/editEvents').get((req, res) => {
-	res.send(moment().day(0));
+	app.route('/deleteEvent/:room/:id').delete((req, res) => {
+		console.log(req.params.id);
+		db.collection('event').findOneAndDelete({_id: ObjectId(req.params.id)}).then(() =>{
+			db.collection('event').find({Date: {$gte: moment().format('YYYY-MM-DD')}, Room: req.params.room}).sort({SortField: 1}).toArray((err, data) => {
+				if(err) throw err;
+				res.json(data);
+			})
+		})
+	})
+
+app.route('/editEvents/:room').get((req, res) => {
+	db.collection('event').find({Date: {$gte: moment().format('YYYY-MM-DD')}, Room: req.params.room}).sort({SortField: 1}).toArray((err, data) => {
+		if(err) throw err;
+		data.forEach(e =>{
+			e.Date = moment(e.Date).format('ddd, MMM DD YYYY');
+		});
+		res.render('editMeetings', {data, Title: `Conference Room ${req.params.room}`, url: req.params.room.toLowerCase()});
+	})
 	//db.collection('event').find({})
 })
 	app.route('/getEvents/:room').get((req, res) => {
