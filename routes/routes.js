@@ -29,7 +29,7 @@ module.exports = (app, db) => {
 		}
 
 		db.collection('event').insertMany(insert);
-    res.send('Success');
+		res.send('Success');
 	});
 
 	app.route('/roomDisplay/:room').get((req, res) => {
@@ -41,24 +41,83 @@ module.exports = (app, db) => {
 
 	app.route('/deleteEvent/:room/:id').delete((req, res) => {
 		console.log(req.params.id);
-		db.collection('event').findOneAndDelete({_id: ObjectId(req.params.id)}).then(() =>{
-			db.collection('event').find({Date: {$gte: moment().format('YYYY-MM-DD')}, Room: req.params.room}).sort({SortField: 1}).toArray((err, data) => {
-				if(err) throw err;
-				res.json(data);
-			})
-		})
-	})
+		db
+			.collection('event')
+			.findOneAndDelete({ _id: ObjectId(req.params.id) })
+			.then(() => {
+				db
+					.collection('event')
+					.find({
+						Date: { $gte: moment().format('YYYY-MM-DD') },
+						Room: req.params.room
+					})
+					.sort({ SortField: 1 })
+					.toArray((err, data) => {
+						if (err) throw err;
+						data.forEach(e => {
+							e.Date = moment(e.Date).format('ddd, MMM DD YYYY');
+						});
+						res.json(data);
+					});
+			});
+	});
 
-app.route('/editEvents/:room').get((req, res) => {
-	db.collection('event').find({Date: {$gte: moment().format('YYYY-MM-DD')}, Room: req.params.room}).sort({SortField: 1}).toArray((err, data) => {
-		if(err) throw err;
-		data.forEach(e =>{
-			e.Date = moment(e.Date).format('ddd, MMM DD YYYY');
-		});
-		res.render('editMeetings', {data, Title: `Conference Room ${req.params.room}`, url: req.params.room.toLowerCase()});
-	})
-	//db.collection('event').find({})
-})
+	app.route('/editEvents/:room').get((req, res) => {
+		db
+			.collection('event')
+			.find({
+				Date: { $gte: moment().format('YYYY-MM-DD') },
+				Room: req.params.room
+			})
+			.sort({ SortField: 1 })
+			.toArray((err, data) => {
+				if (err) throw err;
+				data.forEach(e => {
+					e.Date = moment(e.Date).format('ddd, MMM DD YYYY');
+				});
+				res.render('editMeetings', {
+					data,
+					Title: `Conference Room ${req.params.room}`,
+					url: req.params.room.toLowerCase()
+				});
+			});
+	});
+
+	app.route('/updateEvent/:room/:id').put((req, res) => {
+		let obj = {};
+		let date = moment(req.body.meetingDate).format('YYYY-MM-DD');
+		let startTime = `${req.body.startTime} ${req.body.startTimePeriod}`;
+
+		obj['Title'] = req.body.meetingTitle;
+		obj['Start Time'] = startTime;
+		obj['End Time'] = `${req.body.endTime} ${req.body.endTimePeriod}`;
+		obj['Date'] = date;
+		obj['Room'] = req.params.room;
+		obj['SortField'] = moment(
+			`${date} ${startTime}`,
+			'YYYY-MM-DD h:mm a'
+		).valueOf();
+		console.log(obj);
+		db
+			.collection('event')
+			.findOneAndUpdate({ _id: ObjectId(req.params.id) }, { $set: obj })
+			.then(() => {
+				db
+					.collection('event')
+					.find({
+						Date: { $gte: moment().format('YYYY-MM-DD') },
+						Room: req.params.room
+					})
+					.sort({ SortField: 1 })
+					.toArray((err, data) => {
+						if (err) throw err;
+						data.forEach(e => {
+							e.Date = moment(e.Date).format('ddd, MMM DD YYYY');
+						});
+						res.json(data);
+					});
+			});
+	});
 	app.route('/getEvents/:room').get((req, res) => {
 		db
 			.collection('event')

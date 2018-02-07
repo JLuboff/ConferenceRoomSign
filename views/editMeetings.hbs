@@ -74,8 +74,8 @@ p {
 
 <div class="row">
   <div class="col-sm-12" id="editContent">
-    <p class="text-center header"> Meetings to display </p>
-    <div class="row">
+    <p class="text-center header"> Edit Meetings </p>
+    <div class="row" id="meetingHeader">
 
       <div class="col-sm-3" id="meetingDate"><p class="bold">Date:</p>
       </div>
@@ -92,21 +92,20 @@ p {
       <div class="row" id="eventList">
               {{#each data}}
         <div class="col-sm-3">
-                  <p class="editDate">{{Date}}</p>
+                  <p class="editDate" id="date{{_id}}">{{Date}}</p>
                 </div>
                 <div class="col-sm-3">
-                  <p class="editTitle">{{Title}}</p>
+                  <p class="editTitle" id="title{{_id}}">{{Title}}</p>
                 </div>
                 <div class="col-sm-2">
-                  <p class="editdStart text-right">{{[Start Time]}}</p>
+                  <p class="editdStart text-right" id="startTime{{_id}}">{{[Start Time]}}</p>
                 </div>
                 <div class="col-sm-2">
-                  <p class="editEnd text-right">{{[End Time]}}</p>
+                  <p class="editEnd text-right" id="endTime{{_id}}">{{[End Time]}}</p>
                 </div>
                 <div class="col-sm-2">
-                  <button type="button" class="btn btn-secondary editEvent"><i class="fa fa-pencil"></i></button>
-
-                  <button type="button" class="btn btn-secondary deleteEvent" id="{{_id}}"><i class="fa fa-trash"></i></button>
+                  <button type="button" class="btn btn-secondary editEvent" id="edit{{_id}}"><i class="fa fa-pencil"></i></button>
+                  <button type="button" class="btn btn-secondary deleteEvent" id="delete{{_id}}"><i class="fa fa-trash"></i></button>
                 </div>
                 {{/each}}
 
@@ -123,35 +122,244 @@ p {
 <script src='https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js'></script>
 <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery-serialize-object/2.5.0/jquery.serialize-object.min.js'></script>
 <script>
-$(document).on('click', '.deleteEvent', function(e){
-  $.ajax({
-    type: 'DELETE',
-    url: '/deleteEvent/{{url}}/'+ e.target.id,
-    success: function(data){
-      console.log(data);
-      $('#eventList').empty();
-      data.forEach(function(e){
-        $('#eventList').append('<div class="col-sm-3">\
-                  <p class="editDate">'+e.Date +'</p>\
+function numOnly(){
+   $(".numOnly").alphanum({
+     allow              : ':',
+     disallow           : 'xyz',
+     allowSpace         : false,
+     allowNumeric       : true,
+     allowUpper         : false,
+     allowLower         : false,
+     allowCaseless      : true,
+     allowLatin         : true,
+     allowOtherCharSets : true,
+     forceUpper         : false,
+     forceLower         : false,
+     maxLength          : NaN
+   });
+ }
+ numOnly();
+$(document).on('click', '.deleteEvent', function(e) {
+	$.ajax({
+		type: 'DELETE',
+		url: '/deleteEvent/{{url}}/' + e.target.id.replace('delete', ''),
+		success: function(data) {
+			$('#eventList').empty();
+			data.forEach(function(e) {
+				$('#eventList').append(
+					'<div class="col-sm-3">\
+                  <p class="editDate" id="date' +
+						e._id +
+						'">' +
+						e.Date +
+						'</p>\
                 </div>\
                 <div class="col-sm-3">\
-                  <p class="editTitle">'+e.Title+'</p>\
+                  <p class="editTitle" id="title' +
+						e._id +
+						'">' +
+						e.Title +
+						'</p>\
                 </div>\
                 <div class="col-sm-2">\
-                  <p class="editdStart text-right">'+e['Start Time']+'</p>\
+                  <p class="editdStart text-right" id="startTime' +
+						e._id +
+						'">' +
+						e['Start Time'] +
+						'</p>\
                 </div>\
                 <div class="col-sm-2">\
-                  <p class="editEnd text-right">' + e['End Time']+ '</p>\
+                  <p class="editEnd text-right" id="endTime' +
+						e._id +
+						'">' +
+						e['End Time'] +
+						'</p>\
                 </div>\
                 <div class="col-sm-2">\
-                  <button type="button" class="btn btn-secondary editEvent"><i class="fa fa-pencil"></i></button>\
-                  <button type="button" class="btn btn-secondary deleteEvent" id="'+e._id+'"><i class="fa fa-trash"></i></button>\
-                </div>')
-      })
+                  <button type="button" class="btn btn-secondary editEvent" id="edit' +
+						e._id +
+						'"><i class="fa fa-pencil"></i></button>\
+                  <button type="button" class="btn btn-secondary deleteEvent" id="delete' +
+						e._id +
+						'"><i class="fa fa-trash"></i></button>\
+                </div>'
+				);
+			});
+		}
+	});
+});
 
+$(document).on('click', '.editEvent', function(e) {
+	let id = e.target.id.replace('edit', ''),
+		dateText = moment($('#date' + id).text()).format('YYYY-MM-DD'),
+		titleText = $('#title' + id).text(),
+		startTimeText = $('#startTime' + id)
+			.text()
+			.split(' '),
+		endTimeText = $('#endTime' + id)
+			.text()
+			.split(' ');
+
+	$('#eventList').empty();
+	$('#eventList').append(
+		'<form class="form-horizontal"><div class="form-group">\
+    <label for="meetingDate" class="col-sm-2 control-label">Meeting Date</label>\
+    <div class="col-sm-6">\
+      <input class="form-control meetingDate" id="meetingDate" name="meetingDate" value="' +
+			dateText +
+			'" required/>\
+    </div>\
+  </div>\
+  <div class="form-group">\
+    <label for="meetingTitle" class="col-sm-2 control-label">Meeting Title</label>\
+    <div class="col-sm-6">\
+      <input class="form-control" id="meetingTitle" name="meetingTitle" value="' +
+			titleText +
+			'" required/>\
+    </div>\
+  </div>\
+  <div class="form-group">\
+    <label for="startTime" class="col-sm-2 control-label">Start Time</label>\
+    <div class="col-sm-6">\
+      <input class="form-control numOnly" id="startTime" name="startTime" minlength="4" maxlength="5" value="' +
+			startTimeText[0] +
+			'" required/>\
+    </div>\
+    <div class="col-sm-2">\
+      <select class="form-control" name="startTimePeriod" id="startTimePeriod" required>\
+      <option value=""> </option>\
+      <option value="AM">AM</option>\
+      <option value="PM">PM</option>\
+    </select>\
+  </div>\
+</div>\
+<div class="form-group">\
+  <label for="endTime" class="col-sm-2 control-label">End Time </label>\
+  <div class="col-sm-6">\
+    <input class="form-control numOnly" id="endTime" name="endTime" minlength="4" maxlength="5" value="' +
+			endTimeText[0] +
+			'" required/>\
+  </div>\
+  <div class="col-sm-2">\
+    <select class="form-control" name="endTimePeriod" id="endTimePeriod" required>\
+    <option value=""> </option>\
+    <option value="AM">AM</option>\
+    <option value="PM">PM</option>\
+  </select>\
+</div>\
+</div>\
+<div class="form-group formControls">\
+  <div class="col-sm-2 col-sm-offset-5">\
+    <button type="submit" class="btn btn-lg btn-primary" id="submit">Update</button>\
+  </div>\
+</div>\
+</form>'
+	);
+
+	$('#startTimePeriod').val(startTimeText[1]);
+	$('#endTimePeriod').val(endTimeText[1]);
+	$('#meetingHeader').empty();
+	numOnly();
+	$('.meetingDate').datepicker();
+
+	$('#submit').click(function(e) {
+		e.preventDefault();
+
+		let formData = {
+			meetingTitle: $('#meetingTitle').val(),
+			startTime: $('#startTime').val(),
+			startTimePeriod: $('#startTimePeriod').val(),
+			endTime: $('#endTime').val(),
+			endTimePeriod: $('#endTimePeriod').val(),
+			meetingDate: $('#meetingDate').val()
+		};
+    console.log(formData);
+    console.log(formData.startTime.length == 5);
+    if (formData.startTime.length == 5){
+      if(formData.startTime[0] == 0 || formData.startTime[1] > 2){
+        alert ("Invalid input. Please input in 12 hour time (i.e 12:30 or 3:00)");
+        return;
+      }
     }
-  })
-})
+    if (formData.startTime[1] != ':' && formData.startTime[2] != ':'){
+      alert ("Invalid input. Please include a colon (:) within your time.");
+      return;
+    }
+    if(formData.endTime.length == 5){
+      if(formData.endTime[0] == 0 || formData.endTime[1] > 2){
+        alert ("Invalid input. Please input in 12 hour time (i.e 12:30 or 3:00)");
+        return;
+      }
+    }
+    if (formData.endTime[1] != ':' && formData.endTime[2] != ':'){
+      alert ("Invalid input. Please include a colon (:) within your time.");
+      return;
+    }
+
+		$.ajax({
+			method: 'PUT',
+			url: '/updateEvent/{{url}}/' + id,
+			data: formData,
+			success: function(data) {
+				$('#eventList').empty();
+				$('#meetingHeader').append(
+					'<div class="col-sm-3" id="meetingDate"><p class="bold">Date:</p>\
+                </div>\
+                <div class="col-sm-3" id="meetingTitle"><p class="bold">Meeting Title:</p>\
+                </div>\
+                <div class="col-sm-2" id="meetingStart"><p class="bold text-right">Start Time:</p>\
+                </div>\
+                <div class="col-sm-2" id="meetingtEnd"><p class="bold text-right">End Time:</p>\
+                </div>\
+                <div class="col-sm-2" id="meetingEdit">\
+                </div>'
+				);
+				data.forEach(function(e) {
+					$('#eventList').append(
+						'<div class="col-sm-3">\
+                            <p class="editDate" id="date' +
+							e._id +
+							'">' +
+							e.Date +
+							'</p>\
+                          </div>\
+                          <div class="col-sm-3">\
+                            <p class="editTitle" id="title' +
+							e._id +
+							'">' +
+							e.Title +
+							'</p>\
+                          </div>\
+                          <div class="col-sm-2">\
+                            <p class="editdStart text-right" id="startTime' +
+							e._id +
+							'">' +
+							e['Start Time'] +
+							'</p>\
+                          </div>\
+                          <div class="col-sm-2">\
+                            <p class="editEnd text-right" id="endTime' +
+							e._id +
+							'">' +
+							e['End Time'] +
+							'</p>\
+                          </div>\
+                          <div class="col-sm-2">\
+                            <button type="button" class="btn btn-secondary editEvent" id="edit' +
+							e._id +
+							'"><i class="fa fa-pencil"></i></button>\
+                            <button type="button" class="btn btn-secondary deleteEvent" id="delete' +
+							e._id +
+							'"><i class="fa fa-trash"></i></button>\
+                          </div>'
+					);
+				});
+			}
+		});
+	});
+});
+
+
 </script>
 </body>
 </html>
