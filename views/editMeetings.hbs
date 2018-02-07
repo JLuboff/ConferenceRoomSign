@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html >
+<head>
+
+  <title>{{title}}</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+  <meta charset="UTF-8">
+  <link rel='stylesheet' href='http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/themes/smoothness/jquery-ui.min.css'>
+  <link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css'>
+
+<style>
+body {
+  margin-top: 50px;
+  background: url(http://web-dcor/ConfSignage/images/background.jpg) no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+}
+
+label {
+  display: inline !important;
+}
+
+#submit {
+  margin-top: 50px;
+}
+
+.addRemoveBtn {
+  position: relative;
+  top: -100px;
+}
+
+#publish {
+  margin-top: 25px;
+  margin-bottom: 50px;
+}
+
+.submissionControls {
+  position: relative;
+  top: 25px;
+}
+
+p {
+  font-size: 25px;
+}
+
+.bold {
+  font-weight: bold;
+}
+
+.header {
+  font-size: 45px;
+}
+
+#bodyWell {
+  background-color: rgba(255, 255, 255, 0.5);
+  margin: 100px -75px 0px 200px;
+  padding: 25px;
+  border: 0px;
+}
+
+.topMargin {
+  margin-top: 150px;
+}
+</style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
+
+</head>
+
+<body>
+  <div class="container">
+    <div class="well" id="bodyWell">
+
+<div class="row">
+  <div class="col-sm-12 hidden" id="submitContent">
+    <p class="text-center header"> Meetings to display </p>
+    <div class="row">
+      <div class="col-sm-3" id="meetingSubmitDate"><p class="bold">Date:</p>
+        <p class="submittedDate"></p>
+      </div>
+      <div class="col-sm-5" id="meetingSubmitTitle"><p class="bold">Meeting Title:</p>
+        <p class="submittedTitle"></p>
+      </div>
+      <div class="col-sm-2" id="meetingSubmitStart"><p class="bold">Start Time:</p>
+        <p class="submittedStart"></p>
+      </div>
+      <div class="col-sm-2" id="meetingSubmitEnd"><p class="bold">End Time:</p>
+        <p class="submittedEnd"></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+</div>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.15.1/moment.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery.alphanum/1.0.24/jquery.alphanum.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery-serialize-object/2.5.0/jquery.serialize-object.min.js'></script>

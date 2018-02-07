@@ -137,10 +137,10 @@ p {
     <div class="col-sm-12 hidden" id="submitContent">
       <p class="text-center header"> Meetings to display </p>
       <div class="row">
-        <div class="col-sm-2" id="meetingSubmitDate"><p class="bold">Date:</p>
+        <div class="col-sm-3" id="meetingSubmitDate"><p class="bold">Date:</p>
           <p class="submittedDate"></p>
         </div>
-        <div class="col-sm-6" id="meetingSubmitTitle"><p class="bold">Meeting Title:</p>
+        <div class="col-sm-5" id="meetingSubmitTitle"><p class="bold">Meeting Title:</p>
           <p class="submittedTitle"></p>
         </div>
         <div class="col-sm-2" id="meetingSubmitStart"><p class="bold">Start Time:</p>
@@ -201,7 +201,7 @@ $(document).ready(function(){
 
   $('#add').click(function(){
     meetEventIndex++;
-    var appendTo = meetEventIndex == 1 ? '#meetEventBody' : '#meetEventBody' + (meetEventIndex-1);
+    let appendTo = meetEventIndex == 1 ? '#meetEventBody' : '#meetEventBody' + (meetEventIndex-1);
 
         //When adding additional fields we look at the meetEventBody div and clone and append our cloned fields after the original field. We clear its contnets (if any) and change its id. We call back to our numOnly function to ensure only numbers and colon are accepted in our fields.
     $("#remove").removeClass("hidden");
@@ -249,6 +249,9 @@ $(document).ready(function(){
     $('.meetingDate').datepicker();
   });
 
+  //$(document).on('focus', '.meetingDate', function(){
+//    $(this).datepicker();
+//  })
 
   //A click function to remove an additional fields we've added. This decrements our counter, and if counter = 0 we remove the remove button
   $("#remove").click(function(){
@@ -296,7 +299,7 @@ $('#meetEvent').submit(function(e){
     startEndTimeArr = [];
 
     for(var i = 0; i < formData.meetingTitle.length; i++){
-      var date = formData.meetingDate[i];
+      var date = moment(formData.meetingDate[i]).format('ddd, MMM DD YYYY');
       var title = formData.meetingTitle[i];
       var startTime = formData.startTime[i] + " " + formData.startTimePeriod[i];
       var endTime = formData.endTime[i] + " " + formData.endTimePeriod[i];
@@ -332,10 +335,8 @@ $('#meetEvent').submit(function(e){
     for (var j = 0; j < startEndTimeArr.length; j++) {
       var numTwo = j + 1
       if (numTwo < startEndTimeArr.length){
-        //var start = startEndTimeArr[j][0];
         var end = startEndTimeArr[j][1];
         var startTwo = startEndTimeArr[numTwo][0];
-        //var endTwo = startEndTimeArr[numTwo][1];
         if (end > startTwo){
           alert ("Certain meeting times are overlapping, please select 'Modify Meetings' to correct them.");
           $("#publish").prop("disabled", true);
@@ -353,17 +354,6 @@ $('#meetEvent').submit(function(e){
         }
     })
 })
-  //})
-/*
-    $.ajax({
-      method: "POST",
-      url: "/createEvents/{{url}}",
-      data: formData,
-      success: function(data){
-        console.log(`Success: ${data}`)
-      }
-    }) */
-
   })
 })
 </script>

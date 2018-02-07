@@ -37,6 +37,10 @@ module.exports = (app, db) => {
 		});
 	});
 
+app.route('/editEvents').get((req, res) => {
+	res.send(moment().day(0));
+	//db.collection('event').find({})
+})
 	app.route('/getEvents/:room').get((req, res) => {
 		db
 			.collection('event')
