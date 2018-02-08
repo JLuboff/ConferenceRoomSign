@@ -147,7 +147,6 @@ p {
       </div>
     </div>
   </div>
-
 </div>
 </div>
 <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js'></script>
@@ -158,7 +157,7 @@ p {
 <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery-serialize-object/2.5.0/jquery.serialize-object.min.js'></script>
 <script>
 $(document).ready(function(){
-  //Limit input field to only allow numbers and colon. I changed this into a function as to allow recursion. It was not being applied to our cloned fields.
+  //Limit input field to only allow numbers and colon.
   //By calling to our function below, it then gets applied.
  function numOnly(){
     $(".numOnly").alphanum({
@@ -181,7 +180,7 @@ $(document).ready(function(){
   function convertTime(time) {
     return moment(time, "YYYY-MM-DD h:mm a").valueOf();
   }
-
+//Sets datepicker settings then applies to initial date field
   $.datepicker.setDefaults({
     dateFormat: 'yy-mm-dd',
     showButtonPanel: true
@@ -192,13 +191,11 @@ $(document).ready(function(){
       appendCount = 0;
 
   //We create a click function to add additional fields if an additional meeting is needed. It will also reveal the Remove button. Adds one to our counter each time
-
-
   $('#add').click(function(){
     meetEventIndex++;
     let appendTo = meetEventIndex == 1 ? '#meetEventBody' : '#meetEventBody' + (meetEventIndex-1);
 
-        //When adding additional fields we look at the meetEventBody div and clone and append our cloned fields after the original field. We clear its contnets (if any) and change its id. We call back to our numOnly function to ensure only numbers and colon are accepted in our fields.
+        //When adding additional fields we look at the meetEventBody div and clone and append our cloned fields after the original field. We clear its contnets (if any) and change its id. We call back to our numOnly and datepicker function to ensure only numbers and colon are accepted in our fields.
     $("#remove").removeClass("hidden");
     $(appendTo).append('<div id="meetEventBody' + meetEventIndex +'"> \
     <div class="form-group"> \
@@ -244,10 +241,6 @@ $(document).ready(function(){
     $('.meetingDate').datepicker();
   });
 
-  //$(document).on('focus', '.meetingDate', function(){
-//    $(this).datepicker();
-//  })
-
   //A click function to remove an additional fields we've added. This decrements our counter, and if counter = 0 we remove the remove button
   $("#remove").click(function(){
     $("#meetEventBody" + meetEventIndex).remove();
@@ -256,6 +249,7 @@ $(document).ready(function(){
       $('#remove').addClass("hidden");
     }
   })
+  //On submit, runs validation followed by showing a review screen to review meetings
 $('#meetEvent').submit(function(e){
   e.preventDefault();
   $('#title').addClass('hidden');
@@ -285,7 +279,7 @@ $('#meetEvent').submit(function(e){
         return;
       }
     }
-
+    //Hide and reveal controls as necessary
     $(this).addClass("hidden");
     $(".addRemoveBtn").addClass("hidden");
     $(".submissionControls, #submitContent").removeClass("hidden");
@@ -307,6 +301,7 @@ $('#meetEvent').submit(function(e){
       $(".submittedEnd").append('<p>' + endTime + '</p>');
     }
 
+    //Sort by date/time
     function sortByStart(a, b){
       if (a[0] === b[0]){
         return 0;
@@ -338,21 +333,16 @@ $('#meetEvent').submit(function(e){
         }
       }
     }
-    //On submit of the form, we use the serializeJSON framework to format our data and then use .post to send to our php script which then writes it to our json file
+    //On submit of the form, we send an ajax call to our backend to write all meetings to our mongodb
     $("#publish").click(function(event){
       $.ajax({
         method: "POST",
         url: "/createEvents/{{url}}",
-        data: formData,
-        success: function(data){
-
-        }
+        data: formData
     })
 })
   })
 })
 </script>
-
-
 </body>
 </html>
