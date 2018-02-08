@@ -1,13 +1,11 @@
 <!DOCTYPE html>
 <html >
 <head>
-
   <title>{{title}}</title>
   <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
   <meta charset="UTF-8">
   <link rel='stylesheet' href='http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/themes/smoothness/jquery-ui.min.css'>
   <link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css'>
-
 <style>
 body {
   margin-top: 50px;
@@ -22,25 +20,6 @@ label {
   display: inline !important;
 }
 
-#submit {
-  margin-top: 50px;
-}
-
-.addRemoveBtn {
-  position: relative;
-  top: -100px;
-}
-
-#publish {
-  margin-top: 25px;
-  margin-bottom: 50px;
-}
-
-.submissionControls {
-  position: relative;
-  top: 25px;
-}
-
 p {
   font-size: 18px;
 }
@@ -51,6 +30,10 @@ p {
 
 .header {
   font-size: 45px;
+}
+
+#return {
+  margin-top: 25px;
 }
 
 #bodyWell {
@@ -71,31 +54,36 @@ p {
 <body>
   <div class="container">
     <div class="well" id="bodyWell">
+      <div class="row">
+        <div class="col-sm-12" id="editContent">
+          <p class="text-center header"> Edit Meetings </p>
 
-<div class="row">
-  <div class="col-sm-12" id="editContent">
-    <p class="text-center header"> Edit Meetings </p>
-    <div class="row" id="meetingHeader">
+          <div class="row" id="meetingHeader">
+            <div class="col-sm-3" id="meetingDate"><p class="bold">Date:</p>
+            </div>
+            <div class="col-sm-3" id="meetingTitle"><p class="bold">Meeting Title:</p>
+            </div>
+            <div class="col-sm-2" id="meetingStart"><p class="bold text-right">Start Time:</p>
+            </div>
+            <div class="col-sm-2" id="meetingtEnd"><p class="bold text-right">End Time:</p>
+            </div>
+            <div class="col-sm-2" id="meetingEdit">
+            </div>
+          </div>
 
-      <div class="col-sm-3" id="meetingDate"><p class="bold">Date:</p>
-      </div>
-      <div class="col-sm-3" id="meetingTitle"><p class="bold">Meeting Title:</p>
-      </div>
-      <div class="col-sm-2" id="meetingStart"><p class="bold text-right">Start Time:</p>
-      </div>
-      <div class="col-sm-2" id="meetingtEnd"><p class="bold text-right">End Time:</p>
-      </div>
-      <div class="col-sm-2" id="meetingEdit">
-      </div>
-
-</div>
-      <div class="row" id="eventList">
-              {{#each data}}
-        <div class="col-sm-3">
-                  <p class="editDate" id="date{{_id}}">{{Date}}</p>
-                </div>
-                <div class="col-sm-3">
-                  <p class="editTitle" id="title{{_id}}">{{Title}}</p>
+          <div class="row" id="eventList">
+            {{#each data}}
+            <div class="col-sm-3">
+              <p class="editDate" id="date{{_id}}">{{Date}}</p>
+            </div>
+            <div class="col-sm-3">
+              {{#if longTitle}}
+              <p class="editTitle" id="title{{_id}}" fullTitle="{{longTitle}}">
+                {{Title}}</p>
+                {{else}}
+                <p class="editTitle" id="title{{_id}}" fullTitle="{{Title}}">
+                  {{Title}}</p>
+                  {{/if}}
                 </div>
                 <div class="col-sm-2">
                   <p class="editdStart text-right" id="startTime{{_id}}">{{[Start Time]}}</p>
@@ -108,13 +96,16 @@ p {
                   <button type="button" class="btn btn-secondary deleteEvent" id="delete{{_id}}"><i class="fa fa-trash"></i></button>
                 </div>
                 {{/each}}
-
-  </div>
-</div>
-
-</div>
-</div>
-</div>
+              </div>
+              <div class="row">
+                <div class="col-sm-3 col-sm-offset-4">
+                  <a href="/roomSelection" role="button" class="btn btn-lg btn-primary" id="return">Return to Conference Room Selection</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js'></script>
 <script src='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js'></script>
 <script src='https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.15.1/moment.min.js'></script>
@@ -193,7 +184,8 @@ $(document).on('click', '.deleteEvent', function(e) {
 $(document).on('click', '.editEvent', function(e) {
 	let id = e.target.id.replace('edit', ''),
 		dateText = moment($('#date' + id).text()).format('YYYY-MM-DD'),
-		titleText = $('#title' + id).text(),
+		//titleText = $('#title' + id).text(),
+		titleText = $('#title' + id).attr('fullTitle'),
 		startTimeText = $('#startTime' + id)
 			.text()
 			.split(' '),
@@ -319,6 +311,8 @@ $(document).on('click', '.editEvent', function(e) {
                 </div>'
 				);
 				data.forEach(function(e) {
+					let longTitle = e.longTitle ? e.longTitle : e.Title;
+
 					$('#eventList').append(
 						'<div class="col-sm-3">\
                             <p class="editDate" id="date' +
@@ -330,6 +324,8 @@ $(document).on('click', '.editEvent', function(e) {
                           <div class="col-sm-3">\
                             <p class="editTitle" id="title' +
 							e._id +
+							'" fullTitle="' +
+							longTitle +
 							'">' +
 							e.Title +
 							'</p>\
@@ -362,6 +358,7 @@ $(document).on('click', '.editEvent', function(e) {
 		});
 	});
 });
+
 
 </script>
 </body>

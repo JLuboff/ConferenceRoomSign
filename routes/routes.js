@@ -61,6 +61,8 @@ module.exports = (app, db) => {
 				if (err) throw err;
 				data.forEach(e => {
 					e.Date = moment(e.Date).format('ddd, MMM DD YYYY');
+					e.longTitle = e.Title.length > 23 ? e.Title : false;
+					e.Title = e.Title.length > 23 ? e.Title.slice(0, 23) + '...' : e.Title;
 				});
 				res.render('editMeetings', {
 					data,
@@ -109,7 +111,6 @@ module.exports = (app, db) => {
 			`${date} ${startTime}`,
 			'YYYY-MM-DD h:mm a'
 		).valueOf();
-		console.log(obj);
 		db
 			.collection('event')
 			.findOneAndUpdate({ _id: ObjectId(req.params.id) }, { $set: obj })
@@ -125,6 +126,8 @@ module.exports = (app, db) => {
 						if (err) throw err;
 						data.forEach(e => {
 							e.Date = moment(e.Date).format('ddd, MMM DD YYYY');
+							e.longTitle = e.Title.length > 23 ? e.Title : false;
+							e.Title = e.Title.length > 23 ? e.Title.slice(0, 23) + '...' : e.Title;
 						});
 						res.json(data);
 					});
