@@ -2,6 +2,9 @@ const moment = require('moment'),
 			ObjectId = require('mongodb').ObjectId;
 
 module.exports = (app, db) => {
+	app.route('/confSelect').get((req, res) => {
+		res.render('confSelect.hbs');
+	});
 
 	app.route('/createEvents/:room').post((req, res) => {
 		let insert = [];
@@ -43,7 +46,8 @@ module.exports = (app, db) => {
 						data.forEach(e => {
 							e.Date = moment(e.Date).format('ddd, MMM DD YYYY');
 							e.longTitle = e.Title.length > 23 ? e.Title : false;
-							e.Title = e.Title.length > 23 ? e.Title.slice(0, 23) + '...' : e.Title;
+							e.Title =
+								e.Title.length > 23 ? e.Title.slice(0, 23) + '...' : e.Title;
 						});
 						res.json(data);
 					});
@@ -63,7 +67,8 @@ module.exports = (app, db) => {
 				data.forEach(e => {
 					e.Date = moment(e.Date).format('ddd, MMM DD YYYY');
 					e.longTitle = e.Title.length > 23 ? e.Title : false;
-					e.Title = e.Title.length > 23 ? e.Title.slice(0, 23) + '...' : e.Title;
+					e.Title =
+						e.Title.length > 23 ? e.Title.slice(0, 23) + '...' : e.Title;
 				});
 				res.render('editMeetings', {
 					data,
@@ -128,7 +133,8 @@ module.exports = (app, db) => {
 						data.forEach(e => {
 							e.Date = moment(e.Date).format('ddd, MMM DD YYYY');
 							e.longTitle = e.Title.length > 23 ? e.Title : false;
-							e.Title = e.Title.length > 23 ? e.Title.slice(0, 23) + '...' : e.Title;
+							e.Title =
+								e.Title.length > 23 ? e.Title.slice(0, 23) + '...' : e.Title;
 						});
 						res.json(data);
 					});

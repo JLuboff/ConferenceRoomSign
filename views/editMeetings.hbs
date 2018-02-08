@@ -4,8 +4,9 @@
   <title>{{title}}</title>
   <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
   <meta charset="UTF-8">
+  <link href="https://fonts.googleapis.com/css?family=Playfair+Display" rel="stylesheet">
   <link rel='stylesheet' href='http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/themes/smoothness/jquery-ui.min.css'>
-  <link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css'>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/flatly/bootstrap.min.css">
 <style>
 body {
   margin-top: 50px;
@@ -18,10 +19,14 @@ body {
 
 label {
   display: inline !important;
+  font-family: 'Playfair Display', serif;
+
 }
 
 p {
   font-size: 18px;
+  font-family: 'Playfair Display', serif;
+
 }
 
 .bold {
@@ -37,7 +42,7 @@ p {
 }
 
 #bodyWell {
-  background-color: rgba(255, 255, 255, 0.5);
+background-color:  rgba(236, 240, 241, 0.5);
   margin: 100px -75px 0px 200px;
   padding: 25px;
   border: 0px;
@@ -99,7 +104,7 @@ p {
               </div>
               <div class="row">
                 <div class="col-sm-3 col-sm-offset-4">
-                  <a href="/roomSelection" role="button" class="btn btn-lg btn-primary" id="return">Return to Conference Room Selection</a>
+                  <a href="/confSelect" role="button" class="btn btn-primary" id="return">Conference Room Selection</a>
                 </div>
               </div>
             </div>
@@ -183,6 +188,7 @@ $(document).on('click', '.deleteEvent', function(e) {
 });
 
 $(document).on('click', '.editEvent', function(e) {
+  $('#return').addClass('hidden');
 	let id = e.target.id.replace('edit', ''),
 		dateText = moment($('#date' + id).text()).format('YYYY-MM-DD'),
 		//titleText = $('#title' + id).text(),
@@ -244,7 +250,7 @@ $(document).on('click', '.editEvent', function(e) {
 </div>\
 <div class="form-group formControls">\
   <div class="col-sm-2 col-sm-offset-5">\
-    <button type="submit" class="btn btn-lg btn-primary" id="submit">Update</button>\
+    <button type="submit" class="btn btn-primary" id="submit">Update</button>\
   </div>\
 </div>\
 </form>'
@@ -298,6 +304,7 @@ $(document).on('click', '.editEvent', function(e) {
 			url: '/updateEvent/{{url}}/' + id,
 			data: formData,
 			success: function(data) {
+        $('#return').removeClass('hidden');
 				$('#eventList').empty();
 				$('#meetingHeader').append(
 					'<div class="col-sm-3" id="meetingDate"><p class="bold">Date:</p>\

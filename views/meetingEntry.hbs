@@ -4,9 +4,9 @@
   <title>{{title}}</title>
   <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
   <meta charset="UTF-8">
+  <link href="https://fonts.googleapis.com/css?family=Playfair+Display" rel="stylesheet">
   <link rel='stylesheet' href='http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/themes/smoothness/jquery-ui.min.css'>
-  <link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css'>
-
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/flatly/bootstrap.min.css">
 <style>
 body {
   margin-top: 50px;
@@ -19,27 +19,28 @@ body {
 
 label {
   display: inline !important;
+  font-family: 'Playfair Display', serif;
 }
 
 #submit {
-  margin-top: 50px;
+  margin-top: 75px !important;
 }
 
 .addRemoveBtn {
-  position: relative;
-  top: -100px;
+  position: relative !important;
+  top: -100px !important;
+  margin-top: -50px;
 }
-
-
 
 .submissionControls {
   position: relative;
   top: 25px;
-  margin-bottom: 50px;
+  margin-bottom: 75px;
 }
 
 p {
   font-size: 25px;
+  font-family: 'Playfair Display', serif;
 }
 
 .bold {
@@ -51,7 +52,7 @@ p {
 }
 
 #bodyWell {
-  background-color: rgba(255, 255, 255, 0.5);
+  background-color:  rgba(236, 240, 241, 0.5);
   margin: 100px -75px 0px 200px;
   padding: 25px;
   border: 0px;
@@ -119,10 +120,10 @@ p {
       </form>
       <div class="row addRemoveBtn">
         <div class="col-sm-4 col-sm-offset-3">
-          <button id="add" class="btn"><i class="fa fa-plus"></i> Additional Meeting</button>
+          <button id="add" class="btn btn-success" type="button"><i class="fa fa-plus"></i> Additional Meeting</button>
         </div>
         <div class="col-sm-4">
-          <button id="remove" class="btn hidden"><i class="fa fa-minus"></i> Remove Meeting</button>
+          <button id="remove" class="btn btn-success hidden"><i class="fa fa-minus"></i> Remove Meeting</button>
         </div>
       </div>
     </div>
@@ -313,7 +314,7 @@ $('#meetEvent').submit(function(e){
     //We check if to make sure we don't already have a submissionControls, if we don't, we add them. If we do, no action.
     if(appendCount == 0){
       appendCount++;
-      $("#submitContent").append('<div class="form-group submissionControls"><div class="col-sm-4 col-sm-offset-3"><button id="modify" class="btn"><i class="fa fa-edit"></i> Modify Meetings</button></div><div class="col-sm-3"><button type="submit" class="btn btn-primary" id="publish"><i class="fa fa-sign-in"></i> Publish</button></div></div>');
+      $("#submitContent").append('<div class="form-group submissionControls"><div class="col-sm-4 col-sm-offset-3"><button id="modify" class="btn btn-success"><i class="fa fa-edit"></i> Modify Meetings</button></div><div class="col-sm-3"><button type="submit" class="btn btn-primary" id="publish"><i class="fa fa-sign-in"></i> Publish</button></div></div>');
     }
     //When clicking modify meetings, we hide our submissionControls and content and reveal our form with appropriate buttons
     $("#modify").click(function(){
