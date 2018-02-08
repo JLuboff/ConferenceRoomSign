@@ -8,7 +8,7 @@ const express = require('express'),
 var app = express();
 
 app.set('view engine', 'hbs');
-app.use(express.static('public'));
+app.use(express.static(__dirname + '/public/images'));
 app.use(bodyParser.urlencoded({ extended: true }));
 
 MongoClient.connect(`mongodb://localhost:27017`, (err, client) => {

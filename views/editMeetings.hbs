@@ -11,7 +11,7 @@
 <style>
 body {
   margin-top: 50px;
-  background: url(http://web-dcor/ConfSignage/images/background.jpg) no-repeat center center fixed;
+  background: url(/background.jpg) no-repeat center center fixed;
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
@@ -122,6 +122,7 @@ p {
 <script src='https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js'></script>
 <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery-serialize-object/2.5.0/jquery.serialize-object.min.js'></script>
 <script>
+
 function numOnly(){
    $(".numOnly").alphanum({
      allow              : ':',
@@ -273,28 +274,31 @@ $(document).on('click', '.editEvent', function(e) {
 			endTimePeriod: $('#endTimePeriod').val(),
 			meetingDate: $('#meetingDate').val()
 		};
-    console.log(formData);
-    console.log(formData.startTime.length == 5);
-    if (formData.startTime.length == 5){
-      if(formData.startTime[0] == 0 || formData.startTime[1] > 2){
-        alert ("Invalid input. Please input in 12 hour time (i.e 12:30 or 3:00)");
-        return;
-      }
-    }
-    if (formData.startTime[1] != ':' && formData.startTime[2] != ':'){
-      alert ("Invalid input. Please include a colon (:) within your time.");
-      return;
-    }
-    if(formData.endTime.length == 5){
-      if(formData.endTime[0] == 0 || formData.endTime[1] > 2){
-        alert ("Invalid input. Please input in 12 hour time (i.e 12:30 or 3:00)");
-        return;
-      }
-    }
-    if (formData.endTime[1] != ':' && formData.endTime[2] != ':'){
-      alert ("Invalid input. Please include a colon (:) within your time.");
-      return;
-    }
+
+		if (formData.startTime.length == 5) {
+			if (formData.startTime[0] == 0 || formData.startTime[1] > 2) {
+				alert(
+					'Invalid input. Please input in 12 hour time (i.e 12:30 or 3:00)'
+				);
+				return;
+			}
+		}
+		if (formData.startTime[1] != ':' && formData.startTime[2] != ':') {
+			alert('Invalid input. Please include a colon (:) within your time.');
+			return;
+		}
+		if (formData.endTime.length == 5) {
+			if (formData.endTime[0] == 0 || formData.endTime[1] > 2) {
+				alert(
+					'Invalid input. Please input in 12 hour time (i.e 12:30 or 3:00)'
+				);
+				return;
+			}
+		}
+		if (formData.endTime[1] != ':' && formData.endTime[2] != ':') {
+			alert('Invalid input. Please include a colon (:) within your time.');
+			return;
+		}
 
 		$.ajax({
 			method: 'PUT',
@@ -358,7 +362,6 @@ $(document).on('click', '.editEvent', function(e) {
 		});
 	});
 });
-
 
 </script>
 </body>

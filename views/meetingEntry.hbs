@@ -11,7 +11,7 @@
 <style>
 body {
   margin-top: 50px;
-  background: url(http://web-dcor/ConfSignage/images/background.jpg) no-repeat center center fixed;
+  background: url(/background.jpg) no-repeat center center fixed;
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
@@ -263,6 +263,7 @@ $(document).ready(function(){
   })
 $('#meetEvent').submit(function(e){
   e.preventDefault();
+  $('#title').addClass('hidden');
     var formData = $(this).serializeObject();
     //Create a loop for the purpose of testing our time inputs to verify that they contain a colon as well as formatted in 12 hour time instead of 24 hour time
     for (var j = 0; j < formData.startTime.length; j++){
@@ -300,7 +301,7 @@ $('#meetEvent').submit(function(e){
 
     for(var i = 0; i < formData.meetingTitle.length; i++){
       var date = moment(formData.meetingDate[i]).format('ddd, MMM DD YYYY');
-      var title = formData.meetingTitle[i];
+      var title = formData.meetingTitle[i].length > 24 ? formData.meetingTitle[i].slice(0, 24) + '...' : formData.meetingTitle[i];
       var startTime = formData.startTime[i] + " " + formData.startTimePeriod[i];
       var endTime = formData.endTime[i] + " " + formData.endTimePeriod[i];
 
