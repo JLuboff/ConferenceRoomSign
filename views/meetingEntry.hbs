@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html >
 <head>
-
   <title>{{title}}</title>
   <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
   <meta charset="UTF-8">
@@ -31,14 +30,12 @@ label {
   top: -100px;
 }
 
-#publish {
-  margin-top: 25px;
-  margin-bottom: 50px;
-}
+
 
 .submissionControls {
   position: relative;
   top: 25px;
+  margin-bottom: 50px;
 }
 
 p {
@@ -50,7 +47,7 @@ p {
 }
 
 .header {
-  font-size: 45px;
+  font-size: 38px;
 }
 
 #bodyWell {
@@ -65,31 +62,29 @@ p {
 }
 </style>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
-
 </head>
-
 <body>
   <div class="container">
     <div class="well" id="bodyWell">
       <div class="row">
-        <div class="col-sm-9 col-sm-offset-2 formDiv">
-          <p class="text-center" id="title"> {{title}}</p>
+        <div class="col-sm-8 col-sm-offset-2 formDiv">
+          <p class="text-center header" id="title"> {{title}}</p>
           <form class="form-horizontal" id="meetEvent">
             <div id="meetEventBody">
               <div class="form-group">
-                <label for="meetingDate" class="col-sm-2 control-label">Meeting Date</label>
+                <label for="meetingDate" class="col-sm-3 control-label">Meeting Date</label>
                 <div class="col-sm-6">
                   <input class="form-control meetingDate" id="meetingDate" name="meetingDate[]" required/>
                 </div>
               </div>
               <div class="form-group">
-                <label for="meetingTitle" class="col-sm-2 control-label">Meeting Title</label>
+                <label for="meetingTitle" class="col-sm-3 control-label">Meeting Title</label>
                 <div class="col-sm-6">
                   <input class="form-control" id="meetingTitle" name="meetingTitle[]" required/>
                 </div>
               </div>
               <div class="form-group">
-                <label for="startTime" class="col-sm-2 control-label">Start Time</label>
+                <label for="startTime" class="col-sm-3 control-label">Start Time</label>
                 <div class="col-sm-6">
                   <input class="form-control numOnly" id="startTime" name="startTime[]" minlength="4" maxlength="5" required/>
                 </div>
@@ -102,7 +97,7 @@ p {
               </div>
             </div>
             <div class="form-group">
-              <label for="endTime" class="col-sm-2 control-label">End Time </label>
+              <label for="endTime" class="col-sm-3 control-label">End Time </label>
               <div class="col-sm-6">
                 <input class="form-control numOnly" id="endTime" name="endTime[]" minlength="4" maxlength="5" required/>
               </div>
@@ -118,7 +113,7 @@ p {
 
         <div class="form-group formControls">
           <div class="col-sm-2 col-sm-offset-4">
-            <button type="submit" class="btn btn-primary" id="submit">Continue</button>
+            <button type="submit" class="btn btn-primary" id="submit"><i class="fa fa-sign-in"></i> Continue</button>
           </div>
         </div>
       </form>
@@ -135,7 +130,7 @@ p {
 
   <div class="row">
     <div class="col-sm-12 hidden" id="submitContent">
-      <p class="text-center header"> Meetings to display </p>
+      <p class="text-center header"> Meetings to Display </p>
       <div class="row">
         <div class="col-sm-3" id="meetingSubmitDate"><p class="bold">Date:</p>
           <p class="submittedDate"></p>
@@ -207,19 +202,19 @@ $(document).ready(function(){
     $("#remove").removeClass("hidden");
     $(appendTo).append('<div id="meetEventBody' + meetEventIndex +'"> \
     <div class="form-group"> \
-        <label for="meetingDate" class="col-sm-2 control-label">Meeting Date</label> \
+        <label for="meetingDate" class="col-sm-3 control-label">Meeting Date</label> \
         <div class="col-sm-6">\
           <input class="form-control meetingDate" id="meetingDate' + meetEventIndex + '" name="meetingDate[]" required/>\
         </div>\
       </div>\
       <div class="form-group">\
-        <label for="meetingTitle" class="col-sm-2 control-label">Meeting Title</label>\
+        <label for="meetingTitle" class="col-sm-3 control-label">Meeting Title</label>\
         <div class="col-sm-6">\
           <input class="form-control" id="meetingTitle' + meetEventIndex +'" name="meetingTitle[]" required/>\
         </div>\
       </div>\
       <div class="form-group">\
-        <label for="startTime" class="col-sm-2 control-label">Start Time</label>\
+        <label for="startTime" class="col-sm-3 control-label">Start Time</label>\
         <div class="col-sm-6">\
           <input class="form-control numOnly" id="startTime' + meetEventIndex +'" name="startTime[]" minlength="4" maxlength="5" required/>\
         </div>\
@@ -232,7 +227,7 @@ $(document).ready(function(){
       </div>\
     </div>\
     <div class="form-group">\
-      <label for="endTime" class="col-sm-2 control-label">End Time </label>\
+      <label for="endTime" class="col-sm-3 control-label">End Time </label>\
       <div class="col-sm-6">\
         <input class="form-control numOnly" id="endTime' +meetEventIndex + '" name="endTime[]" minlength="4" maxlength="5" required/>\
       </div>\
@@ -290,7 +285,6 @@ $('#meetEvent').submit(function(e){
         return;
       }
     }
-    console.log("Validation complete");
 
     $(this).addClass("hidden");
     $(".addRemoveBtn").addClass("hidden");
@@ -324,7 +318,7 @@ $('#meetEvent').submit(function(e){
     //We check if to make sure we don't already have a submissionControls, if we don't, we add them. If we do, no action.
     if(appendCount == 0){
       appendCount++;
-      $("#submitContent").append('<div class="form-group submissionControls"><div class="col-sm-4 col-sm-offset-3"><button id="modify" class="btn"><i class="fa fa-plus"></i> Modify Meetings</button></div></div><div class="form-group submissionControls"><div class="col-sm-4 col-sm-offset-3 text-center"><button type="submit" class="btn btn-primary" id="publish">Publish</button></div></div>');
+      $("#submitContent").append('<div class="form-group submissionControls"><div class="col-sm-4 col-sm-offset-3"><button id="modify" class="btn"><i class="fa fa-edit"></i> Modify Meetings</button></div><div class="col-sm-3"><button type="submit" class="btn btn-primary" id="publish"><i class="fa fa-sign-in"></i> Publish</button></div></div>');
     }
     //When clicking modify meetings, we hide our submissionControls and content and reveal our form with appropriate buttons
     $("#modify").click(function(){
@@ -351,7 +345,7 @@ $('#meetEvent').submit(function(e){
         url: "/createEvents/{{url}}",
         data: formData,
         success: function(data){
-          console.log('Success: ' + data);
+
         }
     })
 })
