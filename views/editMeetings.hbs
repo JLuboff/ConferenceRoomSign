@@ -138,6 +138,7 @@ $(document).on('click', '.deleteEvent', function(e) {
 		success: function(data) {
 			$('#eventList').empty();
 			data.forEach(function(e) {
+        let longTitle = e.longTitle ? e.longTitle : e.Title;
 				$('#eventList').append(
 					'<div class="col-sm-3">\
                   <p class="editDate" id="date' +
@@ -149,7 +150,7 @@ $(document).on('click', '.deleteEvent', function(e) {
                 <div class="col-sm-3">\
                   <p class="editTitle" id="title' +
 						e._id +
-						'">' +
+						'" fullTitle="'+longTitle+'">' +
 						e.Title +
 						'</p>\
                 </div>\
