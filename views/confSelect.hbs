@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html >
+<head>
+
+  <title>DCOR Conference Rooms</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/flatly/bootstrap.min.css">
+  <link href="https://fonts.googleapis.com/css?family=Playfair+Display" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
+<style>
+  body {
+    margin-top: 50px;
+    background: url(/background.jpg) no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+  }
+
+  label {
+    font-size: 25px;
+    font-family: 'Playfair Display', serif;
+  }
+
+  p {
+    font-size: 25px;
+    font-family: 'Playfair Display', serif;
+  }
+
+  .bold {
+    font-weight: bold;
+  }
+
+  .header {
+    font-size: 45px;
+  }
+
+  #bodyWell {
+    background-color:  rgba(236, 240, 241, 0.5);
+    margin: 100px -75px 0px 200px;
+    padding: 25px;
+    border: 0px;
+  }
+
+  .topMargin {
+    margin-top: 150px;
+  }
+</style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="well" id="bodyWell">
+      <div class="row">
+        <div class="col-sm-9 col-sm-offset-2 formDiv">
+          <p class="header text-center">Conference Rooms</p>
+          <div id="confSelect" class="form-horizontal">
+            <div class="form-group">
+              <label for="california" class="col-sm-3 control-label">California </label>
+              <div class="col-sm-2">
+                <a href="/meetingEntry/California" class="btn btn-primary" disabled>Input Meetings</a>
+              </div>
+              <div class="col-sm-2 col-sm-offset-1">
+                <a href="/editEvents/california" class="btn btn-primary" disabled>Edit Meetings</a>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="texas" class="col-sm-3 control-label">Texas </label>
+              <div class="col-sm-2">
+                <a href="/meetingEntry/Texas" class="btn btn-primary">Input Meetings</a>
+              </div>
+              <div class="col-sm-2 col-sm-offset-1">
+                <a href="/editEvents/texas" class="btn btn-primary">Edit Meetings</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js'></script>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js'></script>
+
+</body>
+</html>
