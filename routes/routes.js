@@ -26,7 +26,7 @@ module.exports = (app, db) => {
 		}
 
 		db.collection('event').insertMany(insert);
-		res.send(200);
+		res.sendStatus(200);
 	});
 
 	app.route('/deleteEvent/:room/:id').delete((req, res) => {
