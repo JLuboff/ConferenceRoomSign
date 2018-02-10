@@ -339,7 +339,10 @@ $('#meetEvent').submit(function(e){
       $.ajax({
         method: "POST",
         url: "/createEvents/{{url}}",
-        data: formData
+        data: formData,
+        success: function(){
+          window.location.href = '/confSelect';
+        }
     })
 })
   })
