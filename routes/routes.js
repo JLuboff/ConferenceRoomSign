@@ -26,7 +26,7 @@ module.exports = (app, db) => {
 		}
 
 		db.collection('event').insertMany(insert);
-		res.send('Success');
+		res.redirect('/confSelect');
 	});
 
 	app.route('/deleteEvent/:room/:id').delete((req, res) => {
