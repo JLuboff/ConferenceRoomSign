@@ -154,17 +154,16 @@ function startTime() {
         //Places retrieved JSON data into currentCal variable and then runs the if statement to test if it has changed, if so, we refresh the page.
         currentCal = JSON.stringify(data);
         if (previousCal && currentCal && previousCal !== currentCal) {
-          console.log('refresh');
           location.reload();
         }
         previousCal = currentCal;
         $(".calEvents").empty();
 
         //Loop to get all information for each meeting and display it along with pushing the start and end time to our array for further use
+        if(data.length == 0){
+          $(".calEvents").html("No events currently scheduled");
+        } else {
         for (var i = 0; i < data.length; i++) {
-          if(data.length == 0){
-            $(".calEvents").html("No events currently scheduled");
-          }
           var title = data[i].Title;
           var startTime = data[i]["Start Time"];
           var endTime = data[i]["End Time"];
@@ -177,6 +176,7 @@ function startTime() {
             $(".title" + i).css("font-size", "45px");
           }
         }
+      }
         // A loop to test to see if a meeting is currently under way and to determine what to display if one is, or is not.
         for (var j = 0; j < startEndTimeArr.length; j++) {
           var start = convertTime(startEndTimeArr[j][0]);
@@ -195,7 +195,7 @@ function startTime() {
       })
     }, 2000)
   })
-</script> 
+</script>
 
 </body>
 </html>
