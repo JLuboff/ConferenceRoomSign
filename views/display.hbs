@@ -170,7 +170,7 @@ function startTime() {
           startEndTimeArr.push([fullDate + " " + startTime, fullDate + " " + endTime]);
           $(".calEvents").append("<div class='col-md-6 title"+i + " upcoming" + i +"'>" + title + "</div><div class='col-md-3 upcoming" + i +"'>" + startTime + "</div><div class='col-md-3 upcoming" + i +"'>" + endTime + "</div>");
           //An if/else if statement to test if our title length is too long. If it is, we adjust the font size.
-          if(title.length > 30) {
+          if(title.length > 26) {
             $(".title" + i).css("font-size", "30px");
           } else if(title.length >= 20){
             $(".title" + i).css("font-size", "45px");
