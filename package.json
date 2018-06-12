@@ -1,6 +1,6 @@
 {
   "name": "conferenceroomsign",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "description": "An application to be used for conference room signage",
   "main": "app.js",
   "scripts": {
@@ -21,7 +21,12 @@
     "express": "^4.16.2",
     "hbs": "^4.0.1",
     "moment": "^2.20.1",
-    "momentjs": "^2.0.0",
     "mongodb": "^3.0.2"
+  },
+  "devDependencies": {
+    "eslint": "^4.19.1",
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-config-base": "^1.0.0",
+    "eslint-plugin-import": "^2.12.0"
   }
 }
