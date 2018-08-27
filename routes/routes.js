@@ -7,26 +7,59 @@ module.exports = (app, db) => {
   });
 
   app.route('/createEvents/:room').post((req, res) => {
+    // Need to implement async/await
     const insert = [];
-
+    let count = 0;
     for (let i = 0; i < req.body.meetingTitle.length; i += 1) {
       const obj = {};
+      const meetingDate = req.body.meetingDate[i];
       const startTime = `${req.body.startTime[i]} ${req.body.startTimePeriod[i]}`;
+      const SortField = moment(`${meetingDate} ${startTime}`, 'YYYY-MM-DD h:mm a').valueOf();
+      const endTime = `${req.body.endTime[i]} ${req.body.endTimePeriod[i]}`;
+      const SortEndTime = moment(`${meetingDate} ${endTime}`, 'YYYY-MM-DD h:mm a').valueOf();
+      const Room = req.params.room;
 
       obj.Title = req.body.meetingTitle[i];
       obj['Start Time'] = startTime;
-      obj['End Time'] = `${req.body.endTime[i]} ${req.body.endTimePeriod[i]}`;
-      obj.Date = req.body.meetingDate[i];
-      obj.Room = req.params.room;
-      obj.SortField = moment(
-        `${req.body.meetingDate[i]} ${startTime}`,
-        'YYYY-MM-DD h:mm a',
-      ).valueOf();
+      obj['End Time'] = endTime;
+      obj.Date = meetingDate;
+      obj.Room = Room;
+      obj.SortField = SortField;
+      obj.SortEndTime = SortEndTime;
+
       insert.push(obj);
     }
 
+    insert.forEach(({
+      SortField,
+      SortEndTime,
+      Date,
+      Room,
+    }) => {
+      db.collection('event')
+        .find({
+          Date,
+          Room,
+          $or: [
+            { SortField: { $gte: SortField, $lt: SortEndTime } },
+            { SortEndTime: { $lte: SortEndTime, $gt: SortField } }]
+        })
+        .toArray((err, data) => {
+          console.log(data.length);
+          if (data.length > 0) {
+            count += 1;
+          }
+        });
+    });
+
+
+    console.log(count);
+    if (count) {
+      return res.sendStatus(400);
+    }
+
     db.collection('event').insertMany(insert);
-    res.sendStatus(200);
+    return res.sendStatus(200);
   });
 
   app.route('/deleteEvent/:room/:id').delete((req, res) => {

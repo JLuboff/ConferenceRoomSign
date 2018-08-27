@@ -342,6 +342,9 @@ $('#meetEvent').submit(function(e){
         data: formData,
         success: function(){
           window.location.href = '/confSelect';
+        },
+        error: function(){
+          alert("One or more meeting times are overlapping. Please review meetings under \"Edit Meetings\" and adjust accordingly.")
         }
     })
 })
