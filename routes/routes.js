@@ -6,61 +6,78 @@ module.exports = (app, db) => {
     res.render('confSelect.hbs');
   });
 
-  app.route('/createEvents/:room').post((req, res) => {
-    // Need to implement async/await
-    const insert = [];
-    let count = 0;
-    for (let i = 0; i < req.body.meetingTitle.length; i += 1) {
-      const obj = {};
-      const meetingDate = req.body.meetingDate[i];
-      const startTime = `${req.body.startTime[i]} ${req.body.startTimePeriod[i]}`;
-      const SortField = moment(`${meetingDate} ${startTime}`, 'YYYY-MM-DD h:mm a').valueOf();
-      const endTime = `${req.body.endTime[i]} ${req.body.endTimePeriod[i]}`;
-      const SortEndTime = moment(`${meetingDate} ${endTime}`, 'YYYY-MM-DD h:mm a').valueOf();
-      const Room = req.params.room;
+  function transform(
+    meetingDate,
+    meetingTitle,
+    startTime,
+    startTimePeriod,
+    endTime,
+    endTimePeriod,
+    room,
+  ) {
+    const obj = {};
+    const startTimeFull = `${startTime} ${startTimePeriod}`;
+    const SortField = moment(`${meetingDate} ${startTimeFull}`, 'YYYY-MM-DD h:mm a').valueOf();
+    const endTimeFull = `${endTime} ${endTimePeriod}`;
+    const SortEndTime = moment(`${meetingDate} ${endTimeFull}`, 'YYYY-MM-DD h:mm a').valueOf();
 
-      obj.Title = req.body.meetingTitle[i];
-      obj['Start Time'] = startTime;
-      obj['End Time'] = endTime;
-      obj.Date = meetingDate;
-      obj.Room = Room;
-      obj.SortField = SortField;
-      obj.SortEndTime = SortEndTime;
+    obj.Title = meetingTitle;
+    obj['Start Time'] = startTimeFull;
+    obj['End Time'] = endTimeFull;
+    obj.Date = meetingDate;
+    obj.Room = room;
+    obj.SortField = SortField;
+    obj.SortEndTime = SortEndTime;
 
-      insert.push(obj);
+    return obj;
+  }
+
+  async function exists(item) {
+    console.log(`Before Result, Item: ${JSON.stringify(item, null, 2)}`);
+    const result = await db
+      .collection('event')
+      .find({
+        Date: item.Date,
+        Room: item.Room,
+        $or: [
+          { SortField: { $gte: item.SortField, $lt: item.SortEndTime } },
+          { SortEndTime: { $lte: item.SortEndTime, $gt: item.SortField } }
+        ]
+      })
+      .toArray();
+    console.log(`Result inside exists: ${JSON.stringify(result, null, 2)}`);
+    return !!result.length;
+  }
+
+  app.route('/createEvents/:room').post(async (req, res) => {
+    try {
+      const items = req.body.meetingTitle.map((meetingTitle, i) =>
+        transform(
+          req.body.meetingDate[i],
+          meetingTitle,
+          req.body.startTime[i],
+          req.body.startTimePeriod[i],
+          req.body.endTime[i],
+          req.body.endTimePeriod[i],
+          req.params.room,
+        ));
+
+      const itemsExist = await Promise.all(items.map(exists));
+      console.log(`Items Exists post await: ${JSON.stringify(itemsExist, null, 2)}`);
+      const someExist = itemsExist.some(item => item);
+
+      if (someExist) {
+        return res.sendStatus(400);
+      }
+
+      await db.collection('event').insertMany(items);
+      return res.sendStatus(200);
+    } catch (e) {
+      console.error(e);
+      return res.sendStatus(500);
     }
-
-    insert.forEach(({
-      SortField,
-      SortEndTime,
-      Date,
-      Room,
-    }) => {
-      db.collection('event')
-        .find({
-          Date,
-          Room,
-          $or: [
-            { SortField: { $gte: SortField, $lt: SortEndTime } },
-            { SortEndTime: { $lte: SortEndTime, $gt: SortField } }]
-        })
-        .toArray((err, data) => {
-          console.log(data.length);
-          if (data.length > 0) {
-            count += 1;
-          }
-        });
-    });
-
-
-    console.log(count);
-    if (count) {
-      return res.sendStatus(400);
-    }
-
-    db.collection('event').insertMany(insert);
-    return res.sendStatus(200);
   });
+
 
   app.route('/deleteEvent/:room/:id').delete((req, res) => {
     db
