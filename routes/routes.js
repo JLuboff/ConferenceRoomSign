@@ -33,19 +33,15 @@ module.exports = (app, db) => {
   }
 
   async function exists(item) {
-    console.log(`Before Result, Item: ${JSON.stringify(item, null, 2)}`);
-    const result = await db
-      .collection('event')
+    const result = await db.collection('event')
       .find({
         Date: item.Date,
         Room: item.Room,
-        $or: [
-          { SortField: { $gte: item.SortField, $lt: item.SortEndTime } },
-          { SortEndTime: { $lte: item.SortEndTime, $gt: item.SortField } }
-        ]
-      })
+        $or: [{ $or: [{ SortField: { $lte: item.SortField }, SortEndTime: { $gt: item.SortField } }] },
+            { $or: [{ SortField: { $lt: item.SortEndTime }, SortEndTime: { $gte: item.SortEndTime } }]
+          }]})
       .toArray();
-    console.log(`Result inside exists: ${JSON.stringify(result, null, 2)}`);
+
     return !!result.length;
   }
 
