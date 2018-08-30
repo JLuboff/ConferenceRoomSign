@@ -360,7 +360,8 @@ $('#meetEvent').submit(function(e){
         window.location.href = '/confSelect';
       },
       error: function(){
-        alert("One or more meeting times are overlapping prior meetings. Please review meetings under \"Edit Meetings\" and adjust accordingly.")
+        alert("One or more meeting times are overlapping prior meetings. Please review meetings under \"Edit Meetings\" and adjust accordingly.");
+        $(".submissionControls").empty().append('<div class="col-sm-2 col-sm-offset-2"><button id="modify" class="btn btn-success"><i class="fa fa-edit"></i> Modify Meetings</button></div><div class="col-sm-2 col-sm-offset-1"><a href="/editEvents/{{url}}" id="edit" class="btn btn-success"><i class="fa fa-edit"></i> Edit Meetings</a></div><div class="col-sm-2 col-sm-offset-1"><button type="submit" class="btn btn-primary" id="publish"><i class="fa fa-sign-in"></i> Publish</button></div>');
       }
   })
 })
