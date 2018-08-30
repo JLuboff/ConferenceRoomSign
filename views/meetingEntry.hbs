@@ -256,14 +256,26 @@ $('#meetEvent').submit(function(e){
   e.preventDefault();
 
   $('#title').addClass('hidden');
+  // We empty our three categories (If we don't, then each time we try to modify meetings,
+  // it will duplicate previous meetings) before using a loop to create three variables
+  // (title, start time and end time) and then append those to each corresponding category.
+  $(".submittedDate, .submittedTitle, .submittedStart, .submittedEnd").empty();
     formData = $(this).serializeObject();
-    //Create a loop for the purpose of testing our time inputs to verify that they contain a colon as well as formatted in 12 hour time instead of 24 hour time
+    var startEndTimeArr = [];
+    // Create a loop for the purpose of testing our time inputs to verify that they contain a
+    // colon as well as formatted in 12 hour time instead of 24 hour time
+
+
     for (var j = 0; j < formData.startTime.length; j++){
       var splitStart = formData.startTime[j].split('');
       var splitEnd = formData.endTime[j].split('');
       var date = formData.meetingDate[j];
-      var convertedStartTime = convertTime(date + " " + (formData.startTime[j] + " " + formData.startTimePeriod[j]));
-      var convertedEndTime = convertTime(date + " " + (formData.endTime[j] + " " + formData.endTimePeriod[j]));
+      var startTime = formData.startTime[j] + " " + formData.startTimePeriod[j];
+      var endTime = formData.endTime[j] + " " + formData.endTimePeriod[j];
+      var convertedStartTime = convertTime(date + " " + startTime);
+      var convertedEndTime = convertTime(date + " " + endTime);
+      var title = formData.meetingTitle[j].length > 24 ? formData.meetingTitle[j].slice(0, 24) + '...' : formData.meetingTitle[j];
+      var displayDate = moment(formData.meetingDate[j]).format('ddd, MMM DD YYYY');
 
       if (formData.startTime[j].length == 5){
         if(splitStart[0] == 0 || splitStart[1] > 2){
@@ -289,37 +301,29 @@ $('#meetEvent').submit(function(e){
         alert ("Invalid input. Start time can not be after end time.");
         return;
       }
-    }
-    //Hide and reveal controls as necessary
-    $(this).addClass("hidden");
-    $(".addRemoveBtn").addClass("hidden");
-    $(".submissionControls, #submitContent").removeClass("hidden");
-    //We empty our three categories (If we don't, then each time we try to modify meetings, it will duplicate previous meetings) before using a loop to create three variables (title, start time and end time) and then append those to each corresponding category.
-    $(".submittedDate, .submittedTitle, .submittedStart, .submittedEnd").empty();
-    startEndTimeArr = [];
 
-    for(var i = 0; i < formData.meetingTitle.length; i++){
-      var date = moment(formData.meetingDate[i]).format('ddd, MMM DD YYYY');
-      var title = formData.meetingTitle[i].length > 24 ? formData.meetingTitle[i].slice(0, 24) + '...' : formData.meetingTitle[i];
-      var startTime = formData.startTime[i] + " " + formData.startTimePeriod[i];
-      var endTime = formData.endTime[i] + " " + formData.endTimePeriod[i];
+      startEndTimeArr.push([convertedStartTime, convertedEndTime]);
 
-      startEndTimeArr.push([convertTime(formData.meetingDate[i] + " " + startTime), convertTime(formData.meetingDate[i] + " " + endTime)]);
-
-      $('.submittedDate').append('<p>' + date +' </p>');
+      $('.submittedDate').append('<p>' + displayDate +' </p>');
       $(".submittedTitle").append('<p>' + title + '</p>');
       $(".submittedStart").append('<p>' + startTime + '</p>');
       $(".submittedEnd").append('<p>' + endTime + '</p>');
     }
+    console.log(startEndTimeArr);
+    //Hide and reveal controls as necessary
+    $(this).addClass("hidden");
+    $(".addRemoveBtn").addClass("hidden");
+    $(".submissionControls, #submitContent").removeClass("hidden");
 
     //Sort by date/time
     function sortByStart(a, b){
-      if (a[0] === b[0]){
+    if (a[0] === b[0]){
         return 0;
       } else {
         return (a[0] < b[0]) ? -1 : 1;
       }
     }
+
     startEndTimeArr.sort(sortByStart);
     //We check if to make sure we don't already have a submissionControls, if we don't, we add them. If we do, no action.
     if(appendCount == 0){
@@ -344,21 +348,22 @@ $('#meetEvent').submit(function(e){
         }
       }
     }
-    //On submit of the form, we send an ajax call to our backend to write all meetings to our mongodb
-  /*  $("#publish").click(function(event){
-      $.ajax({
-        method: "POST",
-        url: "/createEvents/{{url}}",
-        data: formData,
-        success: function(){
-          window.location.href = '/confSelect';
-        },
-        error: function(){
-          alert("One or more meeting times are overlapping prior meetings. Please review meetings under \"Edit Meetings\" and adjust accordingly.")
-        }
-    })
-}) */
   })
+
+  //On submit of the form, we send an ajax call to our backend to write all meetings to our mongodb
+ $(document).on('click', '#publish', function(event){
+    $.ajax({
+      method: "POST",
+      url: "/createEvents/{{url}}",
+      data: formData,
+      success: function(){
+        window.location.href = '/confSelect';
+      },
+      error: function(){
+        alert("One or more meeting times are overlapping prior meetings. Please review meetings under \"Edit Meetings\" and adjust accordingly.")
+      }
+  })
+})
 })
 </script>
 </body>
