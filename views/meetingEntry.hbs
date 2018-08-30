@@ -188,8 +188,9 @@ $(document).ready(function(){
   })
   $('.meetingDate').datepicker();
 
-  let meetEventIndex = 0,
-      appendCount = 0;
+  let meetEventIndex = 0;
+  let appendCount = 0;
+  let formData;
 
   //We create a click function to add additional fields if an additional meeting is needed. It will also reveal the Remove button. Adds one to our counter each time
   $('#add').click(function(){
@@ -253,12 +254,17 @@ $(document).ready(function(){
   //On submit, runs validation followed by showing a review screen to review meetings
 $('#meetEvent').submit(function(e){
   e.preventDefault();
+
   $('#title').addClass('hidden');
-    var formData = $(this).serializeObject();
+    formData = $(this).serializeObject();
     //Create a loop for the purpose of testing our time inputs to verify that they contain a colon as well as formatted in 12 hour time instead of 24 hour time
     for (var j = 0; j < formData.startTime.length; j++){
       var splitStart = formData.startTime[j].split('');
       var splitEnd = formData.endTime[j].split('');
+      var date = formData.meetingDate[j];
+      var convertedStartTime = convertTime(date + " " + (formData.startTime[j] + " " + formData.startTimePeriod[j]));
+      var convertedEndTime = convertTime(date + " " + (formData.endTime[j] + " " + formData.endTimePeriod[j]));
+
       if (formData.startTime[j].length == 5){
         if(splitStart[0] == 0 || splitStart[1] > 2){
           alert ("Invalid input. Please input in 12 hour time (i.e 12:30 or 3:00)");
@@ -277,6 +283,10 @@ $('#meetEvent').submit(function(e){
       }
       if (formData.endTime[j][1] != ':' && formData.endTime[j][2] != ':'){
         alert ("Invalid input. Please include a colon (:) within your time.");
+        return;
+      }
+      if (convertedEndTime < convertedStartTime){
+        alert ("Invalid input. Start time can not be after end time.");
         return;
       }
     }
@@ -335,7 +345,7 @@ $('#meetEvent').submit(function(e){
       }
     }
     //On submit of the form, we send an ajax call to our backend to write all meetings to our mongodb
-    $("#publish").click(function(event){
+  /*  $("#publish").click(function(event){
       $.ajax({
         method: "POST",
         url: "/createEvents/{{url}}",
@@ -344,10 +354,10 @@ $('#meetEvent').submit(function(e){
           window.location.href = '/confSelect';
         },
         error: function(){
-          //alert("One or more meeting times are overlapping prior meetings. Please review meetings under \"Edit Meetings\" and adjust accordingly.")
+          alert("One or more meeting times are overlapping prior meetings. Please review meetings under \"Edit Meetings\" and adjust accordingly.")
         }
     })
-})
+}) */
   })
 })
 </script>
