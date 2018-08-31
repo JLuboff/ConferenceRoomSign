@@ -192,12 +192,15 @@ $(document).ready(function(){
   let appendCount = 0;
   let formData;
 
-  //We create a click function to add additional fields if an additional meeting is needed. It will also reveal the Remove button. Adds one to our counter each time
+  //We create a click function to add additional fields if an additional meeting is needed. It will also reveal the Remove button. Adds one
+  // to our counter each time
   $('#add').click(function(){
     meetEventIndex++;
     let appendTo = meetEventIndex == 1 ? '#meetEventBody' : '#meetEventBody' + (meetEventIndex-1);
 
-        //When adding additional fields we look at the meetEventBody div and clone and append our cloned fields after the original field. We clear its contnets (if any) and change its id. We call back to our numOnly and datepicker function to ensure only numbers and colon are accepted in our fields.
+        // When adding additional fields we look at the meetEventBody div and clone and append our cloned fields after the original field.
+        // We clear its contnets (if any) and change its id. We call back to our numOnly and datepicker function to ensure only numbers and
+        // colon are accepted in our fields.
     $("#remove").removeClass("hidden");
     $(appendTo).append('<div id="meetEventBody' + meetEventIndex +'"> \
     <div class="form-group"> \
@@ -257,25 +260,25 @@ $('#meetEvent').submit(function(e){
 
   $('#title').addClass('hidden');
   // We empty our three categories (If we don't, then each time we try to modify meetings,
-  // it will duplicate previous meetings) before using a loop to create three variables
+  // it will duplicate previous meetings) before using a loop to create three letiables
   // (title, start time and end time) and then append those to each corresponding category.
   $(".submittedDate, .submittedTitle, .submittedStart, .submittedEnd").empty();
     formData = $(this).serializeObject();
-    var startEndTimeArr = [];
+    let startEndTimeArr = [];
     // Create a loop for the purpose of testing our time inputs to verify that they contain a
     // colon as well as formatted in 12 hour time instead of 24 hour time
 
 
     for (var j = 0; j < formData.startTime.length; j++){
-      var splitStart = formData.startTime[j].split('');
-      var splitEnd = formData.endTime[j].split('');
-      var date = formData.meetingDate[j];
-      var startTime = formData.startTime[j] + " " + formData.startTimePeriod[j];
-      var endTime = formData.endTime[j] + " " + formData.endTimePeriod[j];
-      var convertedStartTime = convertTime(date + " " + startTime);
-      var convertedEndTime = convertTime(date + " " + endTime);
-      var title = formData.meetingTitle[j].length > 24 ? formData.meetingTitle[j].slice(0, 24) + '...' : formData.meetingTitle[j];
-      var displayDate = moment(formData.meetingDate[j]).format('ddd, MMM DD YYYY');
+      let splitStart = formData.startTime[j].split('');
+      let splitEnd = formData.endTime[j].split('');
+      let date = formData.meetingDate[j];
+      let startTime = formData.startTime[j] + " " + formData.startTimePeriod[j];
+      let endTime = formData.endTime[j] + " " + formData.endTimePeriod[j];
+      let convertedStartTime = convertTime(date + " " + startTime);
+      let convertedEndTime = convertTime(date + " " + endTime);
+      let title = formData.meetingTitle[j].length > 24 ? formData.meetingTitle[j].slice(0, 24) + '...' : formData.meetingTitle[j];
+      let displayDate = moment(formData.meetingDate[j]).format('ddd, MMM DD YYYY');
 
       if (formData.startTime[j].length == 5){
         if(splitStart[0] == 0 || splitStart[1] > 2){
@@ -309,7 +312,7 @@ $('#meetEvent').submit(function(e){
       $(".submittedStart").append('<p>' + startTime + '</p>');
       $(".submittedEnd").append('<p>' + endTime + '</p>');
     }
-    console.log(startEndTimeArr);
+
     //Hide and reveal controls as necessary
     $(this).addClass("hidden");
     $(".addRemoveBtn").addClass("hidden");
@@ -328,26 +331,35 @@ $('#meetEvent').submit(function(e){
     //We check if to make sure we don't already have a submissionControls, if we don't, we add them. If we do, no action.
     if(appendCount == 0){
       appendCount++;
-      $("#submitContent").append('<div class="form-group submissionControls"><div class="col-sm-4 col-sm-offset-3"><button id="modify" class="btn btn-success"><i class="fa fa-edit"></i> Modify Meetings</button></div><div class="col-sm-3"><button type="submit" class="btn btn-primary" id="publish"><i class="fa fa-sign-in"></i> Publish</button></div></div>');
+      $("#submitContent").append('<div class="form-group submissionControls">\
+      <div class="col-sm-4 col-sm-offset-3">\
+      <button id="modify" class="btn btn-success"><i class="fa fa-edit"></i> Modify Meetings</button>\
+      </div>\
+      <div class="col-sm-3">\
+      <button type="submit" class="btn btn-primary" id="publish"><i class="fa fa-sign-in"></i> Publish</button>\
+      </div>\
+      </div>');
     }
-    //When clicking modify meetings, we hide our submissionControls and content and reveal our form with appropriate buttons
-    $("#modify").click(function(){
-      $(".submissionControls, #submitContent").addClass("hidden");
-      $("form, .addRemoveBtn").removeClass("hidden");
-    })
-    // A loop to test to determine if any overlapping meetings are occuring. If so, we disable the publish button and insist on the user modifying the meetings
+    // A loop to test to determine if any overlapping meetings are occuring. If so, we disable the publish button and insist on the user
+    // modifying the meetings
     $("#publish").prop("disabled", false);
     for (var j = 0; j < startEndTimeArr.length; j++) {
-      var numTwo = j + 1
+      let numTwo = j + 1
       if (numTwo < startEndTimeArr.length){
-        var end = startEndTimeArr[j][1];
-        var startTwo = startEndTimeArr[numTwo][0];
+        let end = startEndTimeArr[j][1];
+        let startTwo = startEndTimeArr[numTwo][0];
         if (end > startTwo){
           alert ("Certain meeting times are overlapping, please select 'Modify Meetings' to correct them.");
           $("#publish").prop("disabled", true);
         }
       }
     }
+  })
+
+  //When clicking modify meetings, we hide our submissionControls and content and reveal our form with appropriate buttons
+  $(document).on("click", "#modify", function(){
+    $(".submissionControls, #submitContent").addClass("hidden");
+    $("form, .addRemoveBtn").removeClass("hidden");
   })
 
   //On submit of the form, we send an ajax call to our backend to write all meetings to our mongodb
@@ -361,7 +373,15 @@ $('#meetEvent').submit(function(e){
       },
       error: function(){
         alert("One or more meeting times are overlapping prior meetings. Please review meetings under \"Edit Meetings\" and adjust accordingly.");
-        $(".submissionControls").empty().append('<div class="col-sm-2 col-sm-offset-2"><button id="modify" class="btn btn-success"><i class="fa fa-edit"></i> Modify Meetings</button></div><div class="col-sm-2 col-sm-offset-1"><a href="/editEvents/{{url}}" id="edit" class="btn btn-success"><i class="fa fa-edit"></i> Edit Meetings</a></div><div class="col-sm-2 col-sm-offset-1"><button type="submit" class="btn btn-primary" id="publish"><i class="fa fa-sign-in"></i> Publish</button></div>');
+        $(".submissionControls").empty().append('<div class="col-sm-2 col-sm-offset-2">\
+        <button id="modify" class="btn btn-success"><i class="fa fa-edit"></i> Modify Meetings</button>\
+        </div>\
+        <div class="col-sm-2 col-sm-offset-1"><a href="/editEvents/{{url}}" id="edit" class="btn btn-success"><i class="fa fa-edit"></i>\
+         Edit Meetings</a>\
+         </div>\
+         <div class="col-sm-2 col-sm-offset-1"><button type="submit" class="btn btn-primary" id="publish">\
+         <i class="fa fa-sign-in"></i> Publish</button>\
+         </div>');
       }
   })
 })
