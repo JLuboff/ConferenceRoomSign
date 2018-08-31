@@ -2,10 +2,6 @@ const moment = require('moment');
 const { ObjectId } = require('mongodb');
 
 module.exports = (app, db) => {
-  app.route('/confSelect').get((req, res) => {
-    res.render('confSelect.hbs');
-  });
-
   function transform(
     meetingDate,
     meetingTitle,
@@ -45,6 +41,10 @@ module.exports = (app, db) => {
     return !!result.length;
   }
 
+  app.route('/confSelect').get((req, res) => {
+    res.render('confSelect.hbs');
+  });
+
   app.route('/createEvents/:room').post(async (req, res) => {
     try {
       const items = req.body.meetingTitle.map((meetingTitle, i) =>
@@ -59,7 +59,6 @@ module.exports = (app, db) => {
         ));
 
       const itemsExist = await Promise.all(items.map(exists));
-      console.log(`Items Exists post await: ${JSON.stringify(itemsExist, null, 2)}`);
       const someExist = itemsExist.some(item => item);
 
       if (someExist) {
