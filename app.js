@@ -1,3 +1,4 @@
+const compression = require('compression');
 const express = require('express');
 const routes = require('./routes/routes');
 const { MongoClient } = require('mongodb');
@@ -10,6 +11,7 @@ const port = process.env.PORT || 3000;
 const app = express();
 
 app.set('view engine', 'hbs');
+app.use(compression());
 app.use(express.static(`${__dirname}/public/images`));
 app.use(bodyParser.urlencoded({ extended: true }));
 
