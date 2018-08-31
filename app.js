@@ -15,7 +15,7 @@ app.use(compression());
 app.use(express.static(`${__dirname}/public/images`));
 app.use(bodyParser.urlencoded({ extended: true }));
 
-MongoClient.connect('mongodb://localhost:27017', (err, client) => {
+MongoClient.connect('mongodb://localhost:27017', { useNewUrlParser: true }, (err, client) => {
   if (err) throw err;
   const db = client.db('events');
 
