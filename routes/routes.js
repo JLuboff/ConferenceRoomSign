@@ -29,6 +29,7 @@ module.exports = (app, db) => {
   }
 
   async function exists(item) {
+    /* eslint-disable */
     const result = await db.collection('event')
       .find({
         Date: item.Date,
@@ -37,7 +38,7 @@ module.exports = (app, db) => {
             { $or: [{ SortField: { $lt: item.SortEndTime }, SortEndTime: { $gte: item.SortEndTime } }]
           }]})
       .toArray();
-
+    /* eslint-enable */
     return !!result.length;
   }
 
@@ -159,14 +160,19 @@ module.exports = (app, db) => {
     const obj = {};
     const date = moment(req.body.meetingDate).format('YYYY-MM-DD');
     const startTime = `${req.body.startTime} ${req.body.startTimePeriod}`;
+    const endTime = `${req.body.endTime} ${req.body.endTimePeriod}`;
 
     obj.Title = req.body.meetingTitle;
     obj['Start Time'] = startTime;
-    obj['End Time'] = `${req.body.endTime} ${req.body.endTimePeriod}`;
+    obj['End Time'] = endTime;
     obj.Date = date;
     obj.Room = req.params.room;
     obj.SortField = moment(
       `${date} ${startTime}`,
+      'YYYY-MM-DD h:mm a',
+    ).valueOf();
+    obj.SortEndTime = moment(
+      `${date} ${endTime}`,
       'YYYY-MM-DD h:mm a',
     ).valueOf();
     db
