@@ -1,33 +1,11 @@
 {
-  "name": "conferenceroomsign",
-  "version": "1.2.0",
-  "description": "An application to be used for conference room signage",
-  "main": "app.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/JLuboff/ConferenceRoomSign.git"
-  },
-  "author": "Jason Luboff",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/JLuboff/ConferenceRoomSign/issues"
-  },
-  "homepage": "https://github.com/JLuboff/ConferenceRoomSign#readme",
-  "dependencies": {
-    "body-parser": "^1.18.3",
-    "compression": "^1.7.3",
-    "express": "^4.16.3",
-    "hbs": "^4.0.1",
-    "moment": "^2.22.2",
-    "mongodb": "^3.1.4"
-  },
   "devDependencies": {
-    "eslint": "^4.19.1",
-    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint": "^7.2.0",
+    "eslint-config-airbnb": "^18.1.0",
     "eslint-config-base": "^1.0.0",
-    "eslint-plugin-import": "^2.14.0"
+    "eslint-plugin-import": "^2.21.1",
+    "eslint-plugin-jsx-a11y": "^6.2.3",
+    "eslint-plugin-react": "^7.20.0",
+    "eslint-plugin-react-hooks": "^4.0.4"
   }
 }
