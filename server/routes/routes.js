@@ -9,36 +9,57 @@ module.exports = (app, db) => {
     startTimePeriod,
     endTime,
     endTimePeriod,
-    room,
+    room
   ) {
-    const obj = {};
     const startTimeFull = `${startTime} ${startTimePeriod}`;
-    const SortField = moment(`${meetingDate} ${startTimeFull}`, 'YYYY-MM-DD h:mm a').valueOf();
+    const SortField = moment(
+      `${meetingDate} ${startTimeFull}`,
+      'YYYY-MM-DD h:mm a'
+    ).valueOf();
     const endTimeFull = `${endTime} ${endTimePeriod}`;
-    const SortEndTime = moment(`${meetingDate} ${endTimeFull}`, 'YYYY-MM-DD h:mm a').valueOf();
-
-    obj.Title = meetingTitle;
-    obj['Start Time'] = startTimeFull;
-    obj['End Time'] = endTimeFull;
-    obj.Date = meetingDate;
-    obj.Room = room;
-    obj.SortField = SortField;
-    obj.SortEndTime = SortEndTime;
-
-    return obj;
+    const SortEndTime = moment(
+      `${meetingDate} ${endTimeFull}`,
+      'YYYY-MM-DD h:mm a'
+    ).valueOf();
+    return {
+      Title: meetingTitle,
+      'Start Time': startTimeFull,
+      'End Time': endTimeFull,
+      Date: meetingDate,
+      Room: room,
+      SortField,
+      SortEndTime,
+    };
   }
 
   async function exists(item) {
-    /* eslint-disable */
-    const result = await db.collection('event')
+    const { Date, Room, SortField, SortEndTime } = item;
+    const result = await db
+      .collection('event')
       .find({
-        Date: item.Date,
-        Room: item.Room,
-        $or: [{ $or: [{ SortField: { $lte: item.SortField }, SortEndTime: { $gt: item.SortField } }] },
-            { $or: [{ SortField: { $lt: item.SortEndTime }, SortEndTime: { $gte: item.SortEndTime } }]
-          }]})
+        Date,
+        Room,
+        $or: [
+          {
+            $or: [
+              {
+                SortField: { $lte: SortField },
+                SortEndTime: { $gt: SortField },
+              },
+            ],
+          },
+          {
+            $or: [
+              {
+                SortField: { $lt: SortEndTime },
+                SortEndTime: { $gte: SortEndTime },
+              },
+            ],
+          },
+        ],
+      })
       .toArray();
-    /* eslint-enable */
+
     return !!result.length;
   }
 
@@ -56,11 +77,12 @@ module.exports = (app, db) => {
           req.body.startTimePeriod[i],
           req.body.endTime[i],
           req.body.endTimePeriod[i],
-          req.params.room,
-        ));
+          req.params.room
+        )
+      );
 
       const itemsExist = await Promise.all(items.map(exists));
-      const someExist = itemsExist.some(item => item);
+      const someExist = itemsExist.some((item) => item);
 
       if (someExist) {
         return res.sendStatus(400);
@@ -74,14 +96,11 @@ module.exports = (app, db) => {
     }
   });
 
-
   app.route('/deleteEvent/:room/:id').delete((req, res) => {
-    db
-      .collection('event')
+    db.collection('event')
       .findOneAndDelete({ _id: ObjectId(req.params.id) })
       .then(() => {
-        db
-          .collection('event')
+        db.collection('event')
           .find({
             Date: { $gte: moment().format('YYYY-MM-DD') },
             Room: req.params.room,
@@ -93,7 +112,7 @@ module.exports = (app, db) => {
               e.Date = moment(e.Date).format('ddd, MMM DD YYYY');
               e.longTitle = e.Title.length > 23 ? e.Title : false;
               e.Title =
-               e.Title.length > 23 ? `${e.Title.slice(0, 23)}...` : e.Title;
+                e.Title.length > 23 ? `${e.Title.slice(0, 23)}...` : e.Title;
             });
             res.json(data);
           });
@@ -102,10 +121,12 @@ module.exports = (app, db) => {
 
   app.route('/editEvents/:room').get((req, res) => {
     const { room } = req.params;
-    const title = room.toLowerCase() === 'training room' ? 'Training Room' : `Conference Room ${room}`;
+    const title =
+      room.toLowerCase() === 'training room'
+        ? 'Training Room'
+        : `Conference Room ${room}`;
 
-    db
-      .collection('event')
+    db.collection('event')
       .find({
         Date: { $gte: moment().format('YYYY-MM-DD') },
         Room: room,
@@ -117,7 +138,7 @@ module.exports = (app, db) => {
           e.Date = moment(e.Date).format('ddd, MMM DD YYYY');
           e.longTitle = e.Title.length > 23 ? e.Title : false;
           e.Title =
-           e.Title.length > 23 ? `${e.Title.slice(0, 23)}...` : e.Title;
+            e.Title.length > 23 ? `${e.Title.slice(0, 23)}...` : e.Title;
         });
         res.render('editMeetings', {
           data,
@@ -128,8 +149,7 @@ module.exports = (app, db) => {
   });
 
   app.route('/getEvents/:room').get((req, res) => {
-    db
-      .collection('event')
+    db.collection('event')
       .find({ Date: moment().format('YYYY-MM-DD'), Room: req.params.room })
       .sort({ SortField: 1 })
       .toArray((err, docs) => {
@@ -140,7 +160,10 @@ module.exports = (app, db) => {
 
   app.route('/meetingEntry/:room').get((req, res) => {
     const { room } = req.params;
-    const title = room.toLowerCase() === 'training room' ? 'Training Room' : `Conference Room ${room}`;
+    const title =
+      room.toLowerCase() === 'training room'
+        ? 'Training Room'
+        : `Conference Room ${room}`;
     res.render('meetingEntry.hbs', {
       title,
       url: room.toLowerCase(),
@@ -149,7 +172,10 @@ module.exports = (app, db) => {
 
   app.route('/roomDisplay/:room').get((req, res) => {
     const { room } = req.params;
-    const title = room.toLowerCase() === 'training room' ? 'Training Room' : `Conference Room ${room}`;
+    const title =
+      room.toLowerCase() === 'training room'
+        ? 'Training Room'
+        : `Conference Room ${room}`;
     res.render('display.hbs', {
       title,
       url: req.params.room.toLowerCase(),
@@ -169,18 +195,16 @@ module.exports = (app, db) => {
     obj.Room = req.params.room;
     obj.SortField = moment(
       `${date} ${startTime}`,
-      'YYYY-MM-DD h:mm a',
+      'YYYY-MM-DD h:mm a'
     ).valueOf();
     obj.SortEndTime = moment(
       `${date} ${endTime}`,
-      'YYYY-MM-DD h:mm a',
+      'YYYY-MM-DD h:mm a'
     ).valueOf();
-    db
-      .collection('event')
+    db.collection('event')
       .findOneAndUpdate({ _id: ObjectId(req.params.id) }, { $set: obj })
       .then(() => {
-        db
-          .collection('event')
+        db.collection('event')
           .find({
             Date: { $gte: moment().format('YYYY-MM-DD') },
             Room: req.params.room,
@@ -192,7 +216,7 @@ module.exports = (app, db) => {
               e.Date = moment(e.Date).format('ddd, MMM DD YYYY');
               e.longTitle = e.Title.length > 23 ? e.Title : false;
               e.Title =
-               e.Title.length > 23 ? `${e.Title.slice(0, 23)}...` : e.Title;
+                e.Title.length > 23 ? `${e.Title.slice(0, 23)}...` : e.Title;
             });
             res.json(data);
           });
