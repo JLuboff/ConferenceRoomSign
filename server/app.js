@@ -1,4 +1,5 @@
 const compression = require('compression');
+const cors = require('cors');
 const express = require('express');
 const routes = require('./routes/routes');
 const { MongoClient } = require('mongodb');
@@ -10,6 +11,11 @@ const port = process.env.PORT || 3000;
 
 const app = express();
 
+const corsOptions = {
+  origin: ['http://localhost:3000','http://localhost:3001'],
+  optionsSuccessStatus: 200,
+};
+app.use(cors(corsOptions))
 app.set('view engine', 'hbs');
 app.use(compression());
 app.use(express.static(`${__dirname}/public/images`));
