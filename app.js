@@ -6,7 +6,7 @@ const bodyParser = require('body-parser');
 /* eslint-disable */
 const hbs = require('hbs');
 /* eslint-enable */
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3012;
 
 const app = express();
 
